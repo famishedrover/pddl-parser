@@ -80,6 +80,11 @@ class PDDLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by PDDLParser#observeDef.
+    def visitObserveDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PDDLParser#literal.
     def visitLiteral(self, ctx):
         return self.visitChildren(ctx)

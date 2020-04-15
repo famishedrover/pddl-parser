@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from antlr4 import *
 from pddl.parser.PDDLLexer import PDDLLexer
 from pddl.parser.PDDLParser import PDDLParser
@@ -13,7 +14,7 @@ def parse_pddl(file='./test_domain.pddl'):
     stream = CommonTokenStream(lexer)
     parser = PDDLParser(stream)
     tree = parser.domain()
-    print(tree.toStringTree(recog=parser))
+    #print(tree.toStringTree(recog=parser))
     v = PDDLVisitor()
     return v.visitDomain(tree)
 
@@ -30,9 +31,15 @@ def print_domain(domain):
     (:action {{ a.name }}
         :parameters ({% for v in a.parameters %} {{ v }}{% endfor %} )
         :precondition ({{ a.precondition }})
-        :effect ({{ a.effect }})
+        {% if a.effect %}:effect ({{ a.effect }}){% endif %}
+        {% if a.observe %}:observe ({{ a.observe }}){% endif %}
     )
     {% endfor %}
 )
 """)
     return template.render(domain=domain)
+
+if __name__ == '__main__':
+    import sys
+    m = parse_pddl(sys.argv[1])
+    print(print_domain(m))

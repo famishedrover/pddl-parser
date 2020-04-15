@@ -32,11 +32,12 @@ class Predicate(object):
         return self.__variables
 
 class Action(object):
-    def __init__(self, name, parameters=[], precondition=None, effect=None):
+    def __init__(self, name, parameters=[], precondition=None, effect=None, observe=None):
         self.__name = name
         self.__parameters = parameters
         self.__precondition = precondition
         self.__effect = effect
+        self.__observe = observe
     @property
     def name(self):
         return self.__name
@@ -49,6 +50,9 @@ class Action(object):
     @property
     def effect(self):
         return self.__effect
+    @property
+    def observe(self):
+        return self.__observe
 
 class Domain(object):
     def __init__(self, name, requirements=[], types=[], constants=[],

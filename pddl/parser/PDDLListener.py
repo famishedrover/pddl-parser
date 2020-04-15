@@ -139,6 +139,15 @@ class PDDLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PDDLParser#observeDef.
+    def enterObserveDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#observeDef.
+    def exitObserveDef(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by PDDLParser#literal.
     def enterLiteral(self, ctx):
         pass

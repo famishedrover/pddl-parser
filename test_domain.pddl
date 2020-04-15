@@ -23,4 +23,11 @@
 )
 )
 
+
+(:action sense_vis
+ :parameters (?x - rover ?t - objective ?z - waypoint )
+ :precondition (at ?x ?z)
+ :observe (visible_from ?t ?z))
+
+
 )

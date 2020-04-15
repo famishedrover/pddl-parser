@@ -64,9 +64,10 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitActionDef(self, ctx):
         return Action(ctx.name.text,
-            self.visit(ctx.parameters),
-            self.visit(ctx.precondition),
-            self.visit(ctx.effect))
+            parameters=self.visit(ctx.parameters),
+            precondition=self.visit(ctx.precondition),
+            effect=(self.visit(ctx.effect) if ctx.effect else None),
+            observe=(self.visit(ctx.observe) if ctx.observe else None))
 
     def visitGoalDef(self, ctx):
         if ctx.literal():
@@ -110,3 +111,6 @@ class PDDLVisitor(AbstractPDDLVisitor):
             return AndFormula([self.visit(gd) for gd in ctx.ands])
         else:
             return self.visit(ctx.literal())
+
+    def visitObserveDef(self, ctx):
+        return self.visit(ctx.atomicFormula())

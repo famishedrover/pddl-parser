@@ -46,6 +46,7 @@ actionDef: LP ACTION name=NAME
   PARAMETERS LP parameters=typedVarList RP
   (PRECONDITION precondition=goalDef)?
   (EFFECT effect=effectDef)?
+  (OBSERVE observe=observeDef)?
   RP;
 
 goalDef
@@ -79,6 +80,8 @@ condEffect
   | literal
   ;
 
+observeDef: atomicFormula;
+
 literal
   : atomicFormula
   | LP NOT atomicFormula RP;
@@ -104,6 +107,7 @@ ACTION: ':action';
 PARAMETERS: ':parameters';
 PRECONDITION: ':precondition';
 EFFECT: ':effect';
+OBSERVE: ':observe';
 
 // Others
 NOT: 'not';
