@@ -14,23 +14,23 @@ def parse_pddl(file='./test_domain.pddl'):
     stream = CommonTokenStream(lexer)
     parser = PDDLParser(stream)
     tree = parser.domain()
-    #print(tree.toStringTree(recog=parser))
+    print(tree.toStringTree(recog=parser))
     v = PDDLVisitor()
     return v.visitDomain(tree)
 
 def print_domain(domain):
     template = Template("""
 (define (domain {{ domain.name }})
-    (:requirements{% for x in domain.requirements %} {{ x }}{% endfor %})
-    (:types{% for x in domain.types %} {{ x }}{% endfor %})
-    (:constants{% for x in domain.constants %} {{ x }}{% endfor %})
-    (:predicates {% for x in domain.predicates %}
+    {% if domain.requirements %}(:requirements{% for x in domain.requirements %} {{ x }}{% endfor %}){% endif %}
+    {% if domain.types %}(:types{% for x in domain.types %} {{ x }}{% endfor %}){% endif %}
+    {% if domain.constants %}(:constants{% for x in domain.constants %} {{ x }}{% endfor %}){% endif %}
+    {% if domain.predicates %}(:predicates {% for x in domain.predicates %}
         ({{ x.name }}{% for v in x.variables %} {{ v }}{% endfor %}){% endfor %}
-    )
+    ){% endif %}
     {% for a in domain.actions %}
     (:action {{ a.name }}
-        :parameters ({% for v in a.parameters %} {{ v }}{% endfor %} )
-        :precondition ({{ a.precondition }})
+        {% if a.parameters %}:parameters ({% for v in a.parameters %} {{ v }}{% endfor %} ){% endif %}
+        {% if a.precondition %}:precondition ({{ a.precondition }}){% endif %}
         {% if a.effect %}:effect ({{ a.effect }}){% endif %}
         {% if a.observe %}:observe ({{ a.observe }}){% endif %}
     )

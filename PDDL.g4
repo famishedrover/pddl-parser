@@ -4,11 +4,12 @@ grammar PDDL;
 
 domain: LP DEFINE
   LP DOMAIN name=NAME RP
-  requirements=requireDef?
-  types=typesDef?
-  constants=constantsDef?
-  predicates=predicatesDef?
+  ( requirements=requireDef
+  | types=typesDef
+  | constants=constantsDef
+  | predicates=predicatesDef
   // functionsDef?
+  )*
   operators+=structureDef*
   RP;
 
@@ -43,7 +44,7 @@ structureDef: actionDef;
 
 // Action
 actionDef: LP ACTION name=NAME
-  PARAMETERS LP parameters=typedVarList RP
+  (PARAMETERS LP parameters=typedVarList RP)?
   (PRECONDITION precondition=goalDef)?
   (EFFECT effect=effectDef)?
   (OBSERVE observe=observeDef)?

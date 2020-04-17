@@ -10,10 +10,10 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitDomain(self, ctx):
         return Domain(ctx.name.text,
-            self.visit(ctx.requirements),
-            self.visit(ctx.types),
-            self.visit(ctx.constants),
-            self.visit(ctx.predicates),
+            self.visit(ctx.requirements) if ctx.requirements else None,
+            self.visit(ctx.types) if ctx.types else None,
+            self.visit(ctx.constants) if ctx.constants else None,
+            self.visit(ctx.predicates) if ctx.predicates else None,
             [self.visit(o) for o in ctx.operators])
 
     def visitRequireDef(self, ctx):
@@ -64,8 +64,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitActionDef(self, ctx):
         return Action(ctx.name.text,
-            parameters=self.visit(ctx.parameters),
-            precondition=self.visit(ctx.precondition),
+            parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
+            precondition=(self.visit(ctx.precondition) if ctx.precondition else None),
             effect=(self.visit(ctx.effect) if ctx.effect else None),
             observe=(self.visit(ctx.observe) if ctx.observe else None))
 
@@ -74,7 +74,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
             return self.visit(ctx.literal())
         elif ctx.atomicFormula():
             return self.visit(ctx.atomicFormula())
-        elif ctx.ands:
+        elif ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
 
     def visitLiteral(self, ctx):
@@ -96,7 +96,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
         else:
-            return self.visit(ctx.cEffect())
+            return self.visit(ctx.cEffect(0))
 
     def visitCEffect(self, ctx):
         if ctx.FORALL():
@@ -110,7 +110,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
         else:
-            return self.visit(ctx.literal())
+            return self.visit(ctx.literal(0))
 
     def visitObserveDef(self, ctx):
         return self.visit(ctx.atomicFormula())
