@@ -1,5 +1,7 @@
 grammar PDDL;
 
+pddl: (domain | problem);
+
 //--------- DOMAIN ----------------
 
 domain: LP DEFINE
@@ -91,6 +93,30 @@ term
   : name=NAME
   | variable=VARIABLE;
 
+//--------- PROBLEM ----------------
+
+problem: LP DEFINE
+  LP PROBLEM pname=NAME RP
+  LP DDOMAIN dname=NAME RP
+  (requirements=requireDef)?
+  (objects=objectDeclaration)?
+  init
+  goal
+  RP;
+
+objectDeclaration: LP OBJECTS typedObjList RP;
+
+init: LP INIT (initEl* | LP AND initEl* RP) RP;
+initEl
+  : LP UNKNOWN atomicFormula RP
+  | LP OR choices+=literal+ RP
+  | LP ONEOF xchoices+=literal+ RP
+  | literal
+  // fluents
+  ;
+
+goal: LP GOAL goalDef RP;
+
 //--------- TOKENS ----------------
 LP: '(';
 RP: ')';
@@ -98,10 +124,15 @@ OF: '-';
 
 DEFINE: 'define';
 DOMAIN: 'domain';
+PROBLEM: 'problem';
+DDOMAIN: ':domain';
 REQUIREMENTS: ':requirements';
 TYPES: ':types';
 CONSTANTS: ':constants';
 PREDICATES: ':predicates';
+OBJECTS: ':objects';
+INIT: ':init';
+GOAL: ':goal';
 
 // Action Tokens
 ACTION: ':action';
@@ -116,6 +147,9 @@ AND: 'and';
 FORALL: 'forall';
 WHEN: 'when';
 EITHER: 'either';
+UNKNOWN: 'unknown';
+OR: 'or';
+ONEOF: 'oneof';
 
 REQUIRE_KEY:
  ':strips' // Basic STRIPS-style adds and deletes

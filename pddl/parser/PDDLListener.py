@@ -4,6 +4,15 @@ from antlr4 import *
 # This class defines a complete listener for a parse tree produced by PDDLParser.
 class PDDLListener(ParseTreeListener):
 
+    # Enter a parse tree produced by PDDLParser#pddl.
+    def enterPddl(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#pddl.
+    def exitPddl(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by PDDLParser#domain.
     def enterDomain(self, ctx):
         pass
@@ -172,6 +181,51 @@ class PDDLListener(ParseTreeListener):
 
     # Exit a parse tree produced by PDDLParser#term.
     def exitTerm(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#problem.
+    def enterProblem(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#problem.
+    def exitProblem(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#objectDeclaration.
+    def enterObjectDeclaration(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#objectDeclaration.
+    def exitObjectDeclaration(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#init.
+    def enterInit(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#init.
+    def exitInit(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#initEl.
+    def enterInitEl(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#initEl.
+    def exitInitEl(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#goal.
+    def enterGoal(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#goal.
+    def exitGoal(self, ctx):
         pass
 
 

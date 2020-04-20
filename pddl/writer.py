@@ -1,25 +1,7 @@
-#!/usr/bin/env python
-from antlr4 import *
-from pddl.parser.PDDLLexer import PDDLLexer
-from pddl.parser.PDDLParser import PDDLParser
-from pddl.visitor import PDDLVisitor
-from pddl.domain import Domain
-
+import os
 from jinja2 import Template
-from textwrap import dedent
 
-def parse_pddl(file='./test_domain.pddl'):
-    input_stream = FileStream(file)
-    lexer = PDDLLexer(input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = PDDLParser(stream)
-    tree = parser.domain()
-    print(tree.toStringTree(recog=parser))
-    v = PDDLVisitor()
-    return v.visitDomain(tree)
-
-def print_domain(domain):
-    template = Template("""
+domain_template = Template("""
 (define (domain {{ domain.name }})
     {% if domain.requirements %}(:requirements{% for x in domain.requirements %} {{ x }}{% endfor %}){% endif %}
     {% if domain.types %}(:types{% for x in domain.types %} {{ x }}{% endfor %}){% endif %}
@@ -37,9 +19,24 @@ def print_domain(domain):
     {% endfor %}
 )
 """)
-    return template.render(domain=domain)
 
-if __name__ == '__main__':
-    import sys
-    m = parse_pddl(sys.argv[1])
-    print(print_domain(m))
+proble_template = Template("""
+(define (problem {{ problem.name }})
+    (:domain {{ problem.domain }})
+    {% if problem.requirements %}(:requirements{% for x in problem.requirements %} {{ x }}{% endfor %}){% endif %}
+    {% if problem.objects %}(:objects{% for x in problem.objects %} {{ x }}{% endfor %}){% endif %}
+    (:init (and {% for i in problem.init %}
+        {{ i }}{% endfor %}
+        )
+    )
+    (:goal
+        {{ problem.goal }}
+    )
+)
+""")
+
+def print_domain(domain):
+    print(domain_template.render(domain=domain))
+
+def print_problem(problem):
+    print(proble_template.render(problem=problem))

@@ -4,7 +4,9 @@ from .parser.PDDLParser import *
 from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
 
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
+from .problem import Problem
 from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
+from .belief import UnkownLiteral, OrBelief, OneOfBelief
 
 class PDDLVisitor(AbstractPDDLVisitor):
 
@@ -114,3 +116,32 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitObserveDef(self, ctx):
         return self.visit(ctx.atomicFormula())
+
+    def visitProblem(self, ctx):
+        return Problem(
+            ctx.pname.text,
+            ctx.dname.text,
+            self.visit(ctx.init()),
+            self.visit(ctx.goal()),
+            requirements=(self.visit(ctx.requirements) if ctx.requirements else None),
+            objects=(self.visit(ctx.objects) if ctx.objects else None)
+        )
+
+    def visitObjectDeclaration(self, ctx):
+        return self.visit(ctx.typedObjList())
+
+    def visitInit(self, ctx):
+        return [self.visit(x) for x in ctx.initEl()]
+
+    def visitInitEl(self, ctx):
+        if ctx.UNKNOWN():
+            return UnkownLiteral(self.visit(ctx.atomicFormula()))
+        elif ctx.OR():
+            return OrBelief([self.visit(x) for x in ctx.choices])
+        elif ctx.ONEOF():
+            return OneOfBelief([self.visit(x) for x in ctx.xchoices])
+        else:
+            return self.visit(ctx.literal(0))
+
+    def visitGoal(self, ctx):
+        return self.visit(ctx.goalDef())

@@ -5,6 +5,11 @@ from antlr4 import *
 
 class PDDLVisitor(ParseTreeVisitor):
 
+    # Visit a parse tree produced by PDDLParser#pddl.
+    def visitPddl(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PDDLParser#domain.
     def visitDomain(self, ctx):
         return self.visitChildren(ctx)
@@ -97,6 +102,31 @@ class PDDLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by PDDLParser#term.
     def visitTerm(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#problem.
+    def visitProblem(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#objectDeclaration.
+    def visitObjectDeclaration(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#init.
+    def visitInit(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#initEl.
+    def visitInitEl(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#goal.
+    def visitGoal(self, ctx):
         return self.visitChildren(ctx)
 
 
