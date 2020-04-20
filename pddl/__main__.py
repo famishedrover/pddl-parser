@@ -5,7 +5,7 @@ from .parser.PDDLParser import PDDLParser
 from .visitor import PDDLVisitor
 from .domain import Domain
 from .problem import Problem
-from .writer import print_domain, print_problem
+from .writer import write_problem, write_domain
 
 def parse_pddl(file):
     input_stream = antlr4.FileStream(file)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     def parser_domain_func(args):
         m = parse_domain(args.file, args.verbose)
         if args.pprint:
-            print_domain(m)
+            print(write_domain(m))
     parser_domain = subparsers.add_parser('parse_domain',
         #aliases=['d', 'domain'],
         help='parse a PDDL domain')
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     def parser_problem_func(args):
         m = parse_problem(args.file, args.verbose)
         if args.pprint:
-            print_problem(m)
+            print(write_problem(m))
     parser_problem = subparsers.add_parser('parse_problem',
         #aliases=['p', 'problem'],
         help='parse a PDDL problem')

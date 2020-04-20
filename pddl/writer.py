@@ -35,8 +35,8 @@ proble_template = Template("""
 )
 """)
 
-def print_domain(domain):
-    print(domain_template.render(domain=domain))
+def write_domain(domain):
+    return domain_template.render(domain=domain)
 
-def print_problem(problem):
-    print(proble_template.render(problem=problem))
+def write_problem(problem):
+    return proble_template.render(problem=problem)

@@ -1,4 +1,4 @@
-class UnkownLiteral(object):
+class UnknownLiteral(object):
     def __init__(self, formula):
         self.__formula = formula
     @property

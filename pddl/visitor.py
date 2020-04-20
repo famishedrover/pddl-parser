@@ -6,7 +6,7 @@ from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
 from .problem import Problem
 from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
-from .belief import UnkownLiteral, OrBelief, OneOfBelief
+from .belief import UnknownLiteral, OrBelief, OneOfBelief
 
 class PDDLVisitor(AbstractPDDLVisitor):
 
@@ -135,7 +135,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitInitEl(self, ctx):
         if ctx.UNKNOWN():
-            return UnkownLiteral(self.visit(ctx.atomicFormula()))
+            return UnknownLiteral(self.visit(ctx.atomicFormula()))
         elif ctx.OR():
             return OrBelief([self.visit(x) for x in ctx.choices])
         elif ctx.ONEOF():
