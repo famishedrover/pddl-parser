@@ -41,7 +41,9 @@ typedVarList: names+=VARIABLE+ OF vartype=NAME typedVarList
 // TODO
 
 // Operators
-structureDef: actionDef;
+structureDef: actionDef
+  | taskDef;
+  | methodDef;
   //| durationActionDef;
 
 // Action
@@ -93,6 +95,51 @@ term
   : name=NAME
   | variable=VARIABLE;
 
+//---------- Hierarchie
+
+taskDef: LP TASK name=NAME
+  (PARAMETERS LP parameters=typedVarList RP)?
+  RP;
+
+methodDef: LP METHOD name=NAME
+  (PARAMETERS LP parameters=typedVarList RP)?
+  TASK task=atomicFormula
+  (PRECONDITION precondition=goalDef)?
+  (tn=taskNetworkDef)?
+  RP;
+
+taskNetworkDef
+  : ORDERED subtasksDef
+  | SUBTASKS subtasksDef
+    (ORDERING orderingDefs)?
+    (CONSTRAINTS constraintDefs)?;
+
+subtasksDef
+  : LP RP
+  | subtaskDef
+  | LP AND subtaskDef+ RP;
+
+subtaskDef
+  : LP taskId=NAME atomicFormula RP
+  | atomicFormula;
+
+orderingDefs
+  : LP RP
+  | orderingDef
+  | LP AND orderingDef+ RP;
+
+orderingDef: LP BEFORE head=NAME tail+=NAME RP;
+
+constraintDefs
+  : LP RP
+  | constraintDef
+  | LP AND constraintDef+ RP;
+
+constraintDef
+  : LP RP
+  | LP NOT LP EQUALS left=NAME right=NAME RP RP
+  | LP EQUALS left=NAME right=NAME RP;
+
 //--------- PROBLEM ----------------
 
 problem: LP DEFINE
@@ -121,6 +168,7 @@ goal: LP GOAL goalDef RP;
 LP: '(';
 RP: ')';
 OF: '-';
+EQUALS: '=';
 
 DEFINE: 'define';
 DOMAIN: 'domain';
@@ -140,6 +188,15 @@ PARAMETERS: ':parameters';
 PRECONDITION: ':precondition';
 EFFECT: ':effect';
 OBSERVE: ':observe';
+
+// Hierarchi
+TASK: ':task';
+METHOD: ':method';
+ORDERED: ':ordered-tasks' | ':ordered-subtasks';
+SUBTASKS: ':subtasks' | ':tasks';
+ORDERING: ':order' | ':ordering';
+CONSTRAINTS: ':constraints';
+BEFORE: '<';
 
 // Others
 NOT: 'not';

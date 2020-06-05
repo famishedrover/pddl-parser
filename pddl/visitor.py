@@ -63,6 +63,10 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitStructureDef(self, ctx):
         if ctx.actionDef():
             return self.visit(ctx.actionDef())
+        elif ctx.taskDef():
+            return self.visit(ctx.taskDef())
+        elif ctx.methodDef():
+            return self.visit(ctx.methodDef())
 
     def visitActionDef(self, ctx):
         return Action(ctx.name.text,

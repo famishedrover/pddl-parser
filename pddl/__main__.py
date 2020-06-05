@@ -32,7 +32,7 @@ def parse_problem(file, verbose=False):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='pddl')
-    subparsers = parser.add_subparsers(help='sub-commands')
+    subparsers = parser.add_subparsers(help='sub-commands')#, required=True)
     # parse domain
     def parser_domain_func(args):
         m = parse_domain(args.file, args.verbose)
@@ -59,4 +59,9 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--pprint',
         help='pretty print the parsed model', action='store_true')
     args = parser.parse_args()
-    args.func(args)
+
+    try:
+        args.func(args)
+    except AttributeError:
+        print("subcommand missing!")
+        parser.print_help()

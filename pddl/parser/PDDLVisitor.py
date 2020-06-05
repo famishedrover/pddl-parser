@@ -105,6 +105,51 @@ class PDDLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by PDDLParser#taskDef.
+    def visitTaskDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#methodDef.
+    def visitMethodDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#taskNetworkDef.
+    def visitTaskNetworkDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#subtasksDef.
+    def visitSubtasksDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#subtaskDef.
+    def visitSubtaskDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#orderingDefs.
+    def visitOrderingDefs(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#orderingDef.
+    def visitOrderingDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#constraintDefs.
+    def visitConstraintDefs(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PDDLParser#constraintDef.
+    def visitConstraintDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PDDLParser#problem.
     def visitProblem(self, ctx):
         return self.visitChildren(ctx)

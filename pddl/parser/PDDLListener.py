@@ -184,6 +184,87 @@ class PDDLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PDDLParser#taskDef.
+    def enterTaskDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#taskDef.
+    def exitTaskDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#methodDef.
+    def enterMethodDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#methodDef.
+    def exitMethodDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#taskNetworkDef.
+    def enterTaskNetworkDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#taskNetworkDef.
+    def exitTaskNetworkDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#subtasksDef.
+    def enterSubtasksDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#subtasksDef.
+    def exitSubtasksDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#subtaskDef.
+    def enterSubtaskDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#subtaskDef.
+    def exitSubtaskDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#orderingDefs.
+    def enterOrderingDefs(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#orderingDefs.
+    def exitOrderingDefs(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#orderingDef.
+    def enterOrderingDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#orderingDef.
+    def exitOrderingDef(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#constraintDefs.
+    def enterConstraintDefs(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#constraintDefs.
+    def exitConstraintDefs(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by PDDLParser#constraintDef.
+    def enterConstraintDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#constraintDef.
+    def exitConstraintDef(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by PDDLParser#problem.
     def enterProblem(self, ctx):
         pass
