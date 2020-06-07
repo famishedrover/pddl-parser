@@ -1,9 +1,10 @@
 class Problem(object):
-    def __init__(self, name, domain, init, goal, requirements=[], objects=[]):
+    def __init__(self, name, domain, init, goal=None, htn=None, requirements=[], objects=[]):
         self.__name = name
         self.__domain = domain
         self.__init = init
         self.__goal = goal
+        self.__htn = htn
         self.__requirements = requirements
         self.__objects = objects
     @property
@@ -24,3 +25,6 @@ class Problem(object):
     @property
     def objects(self):
         return self.__objects
+    @property
+    def htn(self):
+        return self.__htn

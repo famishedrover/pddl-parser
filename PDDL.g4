@@ -149,8 +149,9 @@ problem: LP DEFINE
   LP DDOMAIN dname=NAME RP
   (requirements=requireDef)?
   (objects=objectDeclaration)?
+  (htn=htnDef)?
   init
-  goal
+  goal?
   RP;
 
 objectDeclaration: LP OBJECTS typedObjList RP;
@@ -165,6 +166,11 @@ initEl
   ;
 
 goal: LP GOAL goalDef RP;
+
+htnDef: LP HTN
+  (PARAMETERS LP parameters=typedVarList RP)?
+  tn=taskNetworkDef
+  RP;
 
 //--------- TOKENS ----------------
 LP: '(';
@@ -198,6 +204,7 @@ ORDERED: ':ordered-tasks' | ':ordered-subtasks';
 SUBTASKS: ':subtasks' | ':tasks';
 ORDERING: ':order' | ':ordering';
 CONSTRAINTS: ':constraints';
+HTN: ':htn';
 BEFORE: '<';
 
 // Others

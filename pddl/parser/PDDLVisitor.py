@@ -175,6 +175,11 @@ class PDDLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by PDDLParser#htnDef.
+    def visitHtnDef(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PDDLParser#nameDef.
     def visitNameDef(self, ctx):
         return self.visitChildren(ctx)

@@ -310,6 +310,15 @@ class PDDLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PDDLParser#htnDef.
+    def enterHtnDef(self, ctx):
+        pass
+
+    # Exit a parse tree produced by PDDLParser#htnDef.
+    def exitHtnDef(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by PDDLParser#nameDef.
     def enterNameDef(self, ctx):
         pass

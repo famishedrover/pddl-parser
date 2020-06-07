@@ -44,13 +44,23 @@ proble_template = Template("""
     (:domain {{ problem.domain }})
     {% if problem.requirements %}(:requirements{% for x in problem.requirements %} {{ x }}{% endfor %}){% endif %}
     {% if problem.objects %}(:objects{% for x in problem.objects %} {{ x }}{% endfor %}){% endif %}
+    {% if problem.htn %}(:htn
+        {% if problem.htn.parameters %}:parameters ({% for v in problem.htn.parameters %} {{ v }}{% endfor %} ){% endif %}
+        :subtasks (and {% for s in problem.htn.network.subtasks %}
+            ({{ s[0] }} {{ s[1] }}){% endfor %}
+        )
+        :ordering (and {% for head, tail in problem.htn.network.ordering.items() %}
+            {% for t in tail %}({{ head }} < {{ t }})
+            {%- endfor %}{% endfor %}
+        )
+    ){% endif %}
     (:init (and {% for i in problem.init %}
         {{ i }}{% endfor %}
         )
     )
-    (:goal
+    {% if problem.goal %}(:goal
         {{ problem.goal }}
-    )
+    ){% endif %}
 )
 """)
 

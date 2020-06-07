@@ -182,7 +182,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
             ctx.pname.text,
             ctx.dname.text,
             self.visit(ctx.init()),
-            self.visit(ctx.goal()),
+            goal=(self.visit(ctx.goal()) if ctx.goal() else None),
+            htn=(self.visit(ctx.htn) if ctx.htn else None),
             requirements=(self.visit(ctx.requirements) if ctx.requirements else None),
             objects=(self.visit(ctx.objects) if ctx.objects else None)
         )
@@ -205,3 +206,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitGoal(self, ctx):
         return self.visit(ctx.goalDef())
+
+    def visitHtnDef(self, ctx):
+        return Method(None, None,
+            parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
+            tn=(self.visit(ctx.tn) if ctx.tn else None)
+            )
