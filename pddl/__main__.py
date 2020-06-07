@@ -61,7 +61,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        args.func(args)
+        args.func
     except AttributeError:
         print("subcommand missing!")
         parser.print_help()
+        import sys
+        sys.exit(-1)
+
+    args.func(args)

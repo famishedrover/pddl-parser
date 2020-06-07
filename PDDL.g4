@@ -42,7 +42,7 @@ typedVarList: names+=VARIABLE+ OF vartype=NAME typedVarList
 
 // Operators
 structureDef: actionDef
-  | taskDef;
+  | taskDef
   | methodDef;
   //| durationActionDef;
 
@@ -99,6 +99,8 @@ term
 
 taskDef: LP TASK name=NAME
   (PARAMETERS LP parameters=typedVarList RP)?
+  (PRECONDITION LP RP)?
+  (EFFECT LP RP)?
   RP;
 
 methodDef: LP METHOD name=NAME
@@ -109,15 +111,15 @@ methodDef: LP METHOD name=NAME
   RP;
 
 taskNetworkDef
-  : ORDERED subtasksDef
-  | SUBTASKS subtasksDef
+  : ORDERED subtasks=subtasksDef
+  | SUBTASKS subtasks=subtasksDef
     (ORDERING orderingDefs)?
     (CONSTRAINTS constraintDefs)?;
 
 subtasksDef
   : LP RP
-  | subtaskDef
-  | LP AND subtaskDef+ RP;
+  | tasks+=subtaskDef
+  | LP AND tasks+=subtaskDef+ RP;
 
 subtaskDef
   : LP taskId=NAME atomicFormula RP
@@ -125,10 +127,10 @@ subtaskDef
 
 orderingDefs
   : LP RP
-  | orderingDef
-  | LP AND orderingDef+ RP;
+  | order+=orderingDef
+  | LP AND order+=orderingDef+ RP;
 
-orderingDef: LP BEFORE head=NAME tail+=NAME RP;
+orderingDef: LP head=NAME BEFORE tail+=NAME RP;
 
 constraintDefs
   : LP RP
@@ -223,6 +225,7 @@ REQUIRE_KEY:
  | ':durative-actions' //	Allows durative actions. Note that this does not imply :fluents.
  | ':duration-inequalities' //	Allows duration constraints in durative actions using inequalities.
  | ':continuous-effects' //	Allows durative actions to affect fluents	continuously over the duration of the actions.
+ | ':hierachie' // HDDL
 ;
 
 /*

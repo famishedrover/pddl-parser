@@ -56,13 +56,16 @@ class Action(object):
 
 class Domain(object):
     def __init__(self, name, requirements=[], types=[], constants=[],
-            predicates=[], actions=[]):
+            predicates=[], actions=[], tasks=[], methods=[]):
         self.__name = name
         self.__requirements = requirements
         self.__types = types
         self.__constants = constants
         self.__predicates = predicates
         self.__actions = actions
+        self.__tasks = tasks
+        self.__methods = methods
+
     @property
     def name(self):
         return self.__name
@@ -81,3 +84,9 @@ class Domain(object):
     @property
     def actions(self):
         return self.__actions
+    @property
+    def tasks(self):
+        return self.__tasks
+    @property
+    def methods(self):
+        return self.__methods

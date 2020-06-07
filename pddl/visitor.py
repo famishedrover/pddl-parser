@@ -3,20 +3,37 @@ from .parser.PDDLLexer import PDDLLexer
 from .parser.PDDLParser import *
 from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
 
+from collections import defaultdict
+import itertools
+
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
 from .problem import Problem
 from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
+from .hierarchy import Task, Method, TaskNetwork
 
 class PDDLVisitor(AbstractPDDLVisitor):
 
+    def __init__(self):
+        AbstractPDDLVisitor.__init__(self)
+        self.task_index = 0
+
+    def index_task(self):
+        i = self.task_index
+        self.task_index += 1
+        return i
+
     def visitDomain(self, ctx):
+        ops = [self.visit(o) for o in ctx.operators]
         return Domain(ctx.name.text,
-            self.visit(ctx.requirements) if ctx.requirements else None,
-            self.visit(ctx.types) if ctx.types else None,
-            self.visit(ctx.constants) if ctx.constants else None,
-            self.visit(ctx.predicates) if ctx.predicates else None,
-            [self.visit(o) for o in ctx.operators])
+            requirements=self.visit(ctx.requirements) if ctx.requirements else None,
+            types=self.visit(ctx.types) if ctx.types else None,
+            constants=self.visit(ctx.constants) if ctx.constants else None,
+            predicates=self.visit(ctx.predicates) if ctx.predicates else None,
+            actions=[a for a in ops if isinstance(a, Action)],
+            tasks=[a for a in ops if isinstance(a, Task)],
+            methods=[a for a in ops if isinstance(a, Method)]
+            )
 
     def visitRequireDef(self, ctx):
         return [k.text for k in ctx.keys]
@@ -74,6 +91,45 @@ class PDDLVisitor(AbstractPDDLVisitor):
             precondition=(self.visit(ctx.precondition) if ctx.precondition else None),
             effect=(self.visit(ctx.effect) if ctx.effect else None),
             observe=(self.visit(ctx.observe) if ctx.observe else None))
+
+    def visitTaskDef(self, ctx):
+        return Task(ctx.name.text,
+            parameters=(self.visit(ctx.parameters) if ctx.parameters else None))
+
+    def visitMethodDef(self, ctx):
+        return Method(ctx.name.text,
+            self.visit(ctx.task),
+            parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
+            precondition=(self.visit(ctx.precondition) if ctx.precondition else None),
+            tn=(self.visit(ctx.tn) if ctx.tn else None)
+            )
+
+    def visitTaskNetworkDef(self, ctx):
+        subtasks = self.visit(ctx.subtasks)
+        ordering = defaultdict(list)
+        if ctx.ORDERED():
+            a, b = itertools.tee(subtasks)
+            next(b, None)
+            for s, t in zip(a, b):
+                ordering[s[0]].append(t[0])
+        elif ctx.ORDERING():
+            order = self.visit(ctx.orderingDefs())
+            for head, tail in order:
+                for t in tail:
+                    ordering[head].append(t)
+        return TaskNetwork(subtasks, ordering)
+
+    def visitOrderingDefs(self, ctx):
+        return [self.visit(o) for o in ctx.order]
+
+    def visitOrderingDef(self, ctx):
+        return (ctx.head.text, [t.text for t in ctx.tail])
+
+    def visitSubtasksDef(self, ctx):
+        return [self.visit(s) for s in ctx.tasks]
+
+    def visitSubtaskDef(self, ctx):
+        return ((f'task{self.index_task()}' if ctx.taskId is None else ctx.taskId.text), self.visit(ctx.atomicFormula()))
 
     def visitGoalDef(self, ctx):
         if ctx.literal():
