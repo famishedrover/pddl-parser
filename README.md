@@ -12,7 +12,7 @@ Useful only if the grammar (PDDL.g4) has been changed:
 ### Dependencies
 
 ```
-python -m pip install jantlr4-python3-runtime inja2 --user
+python -m pip install jantlr4-python3-runtime jinja2 --user
 ```
 
 ### Install
@@ -23,6 +23,8 @@ python setup.py install --user
 
 ## Usage
 
+### Python API
+
 From either a python script or `ipython`:
 
 ```python
@@ -31,4 +33,14 @@ domain = pddl.parse_domain('./benchmarks/other-benchmarks/PDDL/1dispose/domain-c
 problem = pddl.parse_problem('./benchmarks/other-benchmarks/PDDL/1dispose/p-10-1.pddl')
 print(pddl.write_domain(domain))
 print(pddl.write_problem(problem))
+```
+
+### Command-line testing
+
+```bash
+python3 -m pddl -v -p parse_domain './test/domain.hddl'
+```
+
+```bash
+python3 -m pddl -v -p parse_problem './test/pb-hddl.hddl'
 ```
