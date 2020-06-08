@@ -9,6 +9,6 @@ pages:
   - PYTHONPATH=. sphinx-build doc/src/ doc/html/
   artifacts:
     paths:
-    - public
+    - doc/html
   only:
   - master
