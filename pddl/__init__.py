@@ -1,3 +1,7 @@
+"""
+PDDL parser in python
+"""
+
 #from .parsing import parse_domain, parse_problem
 #from .belief import UnknownLiteral, OrBelief, OneOfBelief
 #from .domain import Type, Constant, Variable, Predicate, Action, Domain

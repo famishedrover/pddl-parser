@@ -4,7 +4,7 @@ Classes related to initial belief model.
 
 from typing import Union, List
 from .formula import AtomicFormula, NotFormula
-Literal = Union[AtomicFormula,NotFormula]
+LITERAL = Union[AtomicFormula, NotFormula]
 
 class UnknownLiteral(object):
     """ Unknown literal
@@ -16,6 +16,7 @@ class UnknownLiteral(object):
 
     @property
     def formula(self) -> AtomicFormula:
+        ''' Get formula '''
         return self.__formula
 
     def __str__(self):
@@ -26,17 +27,18 @@ class OrBelief(object):
 
     :param literals: possible initial believes
     """
-    def __init__(self, literals: List[Literal]):
+    def __init__(self, literals: List[LITERAL]):
         self.__literals = literals
 
     @property
-    def literals(self) -> List[Literal]:
+    def literals(self) -> List[LITERAL]:
+        ''' Get choice literals '''
         return self.__literals
 
     def __str__(self):
         pddl = '(or'
-        for a in self.literals:
-            pddl += ' ' + str(a)
+        for literal in self.literals:
+            pddl += ' ' + str(literal)
         pddl += ')'
         return pddl
 
@@ -45,16 +47,17 @@ class OneOfBelief(object):
 
     :param literals: possible exclusive initial believes
     """
-    def __init__(self, literals: List[Literal]):
+    def __init__(self, literals: List[LITERAL]):
         self.__literals = literals
 
     @property
-    def literals(self) -> List[Literal]:
+    def literals(self) -> List[LITERAL]:
+        ''' Get choice literals '''
         return self.__literals
 
     def __str__(self):
         pddl = '(oneof'
-        for a in self.literals:
-            pddl += ' ' + str(a)
+        for literal in self.literals:
+            pddl += ' ' + str(literal)
         pddl += ')'
         return pddl

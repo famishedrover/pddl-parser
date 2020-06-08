@@ -7,9 +7,9 @@ from .domain import Constant
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Method
 
-Literal = Union[AtomicFormula,NotFormula]
-InitElement = Union[AtomicFormula,NotFormula,UnknownLiteral,OrBelief,OneOfBelief]
-Goal = Union[AtomicFormula, NotFormula, AndFormula]
+LITERAL = Union[AtomicFormula, NotFormula]
+INITELT = Union[AtomicFormula, NotFormula, UnknownLiteral, OrBelief, OneOfBelief]
+GOAL = Union[AtomicFormula, NotFormula, AndFormula]
 
 class Problem(object):
     """ PDDL problem
@@ -25,11 +25,11 @@ class Problem(object):
     def __init__(self,
                  name: str,
                  domain: str,
-                 init: List[InitElement],
-                 goal: Goal = None,
+                 init: List[INITELT],
+                 goal: GOAL = None,
                  htn: Method = None,
-                 requirements: List[str] = [],
-                 objects: List[Constant] = []):
+                 requirements: List[str] = (),
+                 objects: List[Constant] = ()):
         self.__name = name
         self.__domain = domain
         self.__init = init
@@ -40,28 +40,35 @@ class Problem(object):
 
     @property
     def name(self) -> str:
+        ''' Get name '''
         return self.__name
 
     @property
     def domain(self) -> str:
+        ''' Get domain '''
         return self.__domain
 
     @property
-    def init(self) -> List[InitElement]:
+    def init(self) -> List[INITELT]:
+        ''' Get initial state '''
         return self.__init
 
     @property
-    def goal(self) -> Goal:
+    def goal(self) -> GOAL:
+        ''' Get goal literals '''
         return self.__goal
 
     @property
     def requirements(self) -> List[str]:
+        ''' Get list of requirements '''
         return self.__requirements
 
     @property
     def objects(self) -> List[Constant]:
+        ''' Get problem objects '''
         return self.__objects
 
     @property
     def htn(self) -> Method:
+        ''' Get HTN goal '''
         return self.__htn

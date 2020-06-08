@@ -27,8 +27,8 @@ def parse_domain(file: str, verbose: bool = False) -> Domain:
     tree = parser.domain()
     if verbose:
         print(tree.toStringTree(recog=parser))
-    v = PDDLVisitor()
-    return v.visitDomain(tree)
+    vis = PDDLVisitor()
+    return vis.visitDomain(tree)
 
 def parse_problem(file: str, verbose: bool = False) -> Problem:
     """ Parse a PDDL problem
@@ -41,5 +41,5 @@ def parse_problem(file: str, verbose: bool = False) -> Problem:
     tree = parser.problem()
     if verbose:
         print(tree.toStringTree(recog=parser))
-    v = PDDLVisitor()
-    return v.visitProblem(tree)
+    vis = PDDLVisitor()
+    return vis.visitProblem(tree)

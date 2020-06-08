@@ -4,10 +4,12 @@ Writing functions to export a model as a PDDL file.
 Uses *jinja2* to define PDDL templates.
 """
 
-import os
 from jinja2 import Template
 
-domain_template = Template("""
+from .domain import Domain
+from .problem import Problem
+
+DOMAIN_TEMPLATE = Template("""
 (define (domain {{ domain.name }})
     {% if domain.requirements %}(:requirements{% for x in domain.requirements %} {{ x }}{% endfor %}){% endif %}
     {% if domain.types %}(:types{% for x in domain.types %} {{ x }}{% endfor %}){% endif %}
@@ -45,7 +47,7 @@ domain_template = Template("""
 )
 """)
 
-proble_template = Template("""
+PROBLEM_TEMPLATE = Template("""
 (define (problem {{ problem.name }})
     (:domain {{ problem.domain }})
     {% if problem.requirements %}(:requirements{% for x in problem.requirements %} {{ x }}{% endfor %}){% endif %}
@@ -70,16 +72,13 @@ proble_template = Template("""
 )
 """)
 
-from .domain import Domain
-from .problem import Problem
-
 def write_domain(domain: Domain) -> str:
     """ Render a domain as a PDDL string
 
     :param domain: domain model
     :return: domain in PDDL syntax
     """
-    return domain_template.render(domain=domain)
+    return DOMAIN_TEMPLATE.render(domain=domain)
 
 def write_problem(problem: Problem) -> str:
     """ Render a problem as a PDDL string
@@ -87,4 +86,4 @@ def write_problem(problem: Problem) -> str:
     :param problem: problem model
     :return: problem in PDDL syntax
     """
-    return proble_template.render(problem=problem)
+    return PROBLEM_TEMPLATE.render(problem=problem)

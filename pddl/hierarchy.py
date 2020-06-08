@@ -14,17 +14,18 @@ class Task(object):
     """
     def __init__(self,
                  name: str,
-                 parameters: List[Variable] = []
-                 ):
+                 parameters: List[Variable] = ()):
         self.__name = name
         self.__parameters = parameters
 
     @property
     def name(self) -> str:
+        ''' Get name '''
         return self.__name
 
     @property
     def parameters(self) -> List[Variable]:
+        ''' Get parameters '''
         return self.__parameters
 
 class Method(object):
@@ -40,8 +41,8 @@ class Method(object):
     """
     def __init__(self, name: str, task: str,
                  parameters: List[Variable] = None,
-                 precondition: Union[AtomicFormula,NotFormula,AndFormula] = None,
-                 tn:'TaskNetwork' = None):
+                 precondition: Union[AtomicFormula, NotFormula, AndFormula] = None,
+                 tn: 'TaskNetwork' = None):
         self.__name = name
         self.__task = task
         self.__parameters = parameters
@@ -50,22 +51,27 @@ class Method(object):
 
     @property
     def name(self) -> str:
+        ''' Get name '''
         return self.__name
 
     @property
     def task(self) -> str:
+        ''' Get task name '''
         return self.__task
 
     @property
     def parameters(self) -> List[Variable]:
+        ''' Get parameters '''
         return self.__parameters
 
     @property
-    def precondition(self) -> Union[AtomicFormula,NotFormula,AndFormula]:
+    def precondition(self) -> Union[AtomicFormula, NotFormula, AndFormula]:
+        ''' Get precondition '''
         return self.__precondition
 
     @property
     def network(self) -> 'TaskNetwork':
+        ''' Get task network '''
         return self.__tn
 
 class TaskNetwork(object):
@@ -83,8 +89,10 @@ class TaskNetwork(object):
 
     @property
     def subtasks(self) -> List[Tuple[str, AtomicFormula]]:
+        ''' Get subtasks '''
         return self.__subtasks
 
     @property
     def ordering(self) -> Dict[str, List[str]]:
+        ''' Get subtasks ordering '''
         return self.__ordering
