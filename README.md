@@ -1,5 +1,9 @@
 # PDDL Parser
 
+[![build status](https://gitlab.com/gitlab-org/gitlab-docs/badges/master/pipeline.svg)](https://gitlab.com/gitlab-org/gitlab-docs/commits/master)
+
+When build is successful, it automatically build the PDDL parser [API Documentation](https://oara-architecture.gitlab.io/planning/pddl-parser).
+
 ## Generating the parser from the grammar
 
 Useful only if the grammar (PDDL.g4) has been changed:
@@ -12,7 +16,7 @@ Useful only if the grammar (PDDL.g4) has been changed:
 ### Dependencies
 
 ```
-python -m pip install jantlr4-python3-runtime jinja2 --user
+python -m pip install antlr4-python3-runtime jinja2 --user
 ```
 
 ### Install
