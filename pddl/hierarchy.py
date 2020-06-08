@@ -1,44 +1,90 @@
+"""
+HDDL domain classes
+"""
+
+from typing import List, Union, Tuple, Dict
+from .formula import AtomicFormula, AndFormula, NotFormula
+from .variable import Variable
+
 class Task(object):
-    def __init__(self, name, parameters=[]):
+    """ HDDL task
+
+    :param name: task name
+    :param parameters: task parameters
+    """
+    def __init__(self,
+                 name: str,
+                 parameters: List[Variable] = []
+                 ):
         self.__name = name
         self.__parameters = parameters
+
     @property
-    def name(self):
+    def name(self) -> str:
         return self.__name
+
     @property
-    def parameters(self):
+    def parameters(self) -> List[Variable]:
         return self.__parameters
 
 class Method(object):
-    def __init__(self, name, task, parameters=None, precondition=None, tn=None):
+    """ HDDL method
+
+    Also used to represent a problem HTN.
+
+    :param name: method name
+    :param task: task implemented by the method
+    :param parameters: method parameters
+    :param precondition: method precondition
+    :param tn: method task network
+    """
+    def __init__(self, name: str, task: str,
+                 parameters: List[Variable] = None,
+                 precondition: Union[AtomicFormula,NotFormula,AndFormula] = None,
+                 tn:'TaskNetwork' = None):
         self.__name = name
         self.__task = task
         self.__parameters = parameters
         self.__precondition = precondition
         self.__tn = tn
+
     @property
-    def name(self):
+    def name(self) -> str:
         return self.__name
+
     @property
-    def task(self):
+    def task(self) -> str:
         return self.__task
+
     @property
-    def parameters(self):
+    def parameters(self) -> List[Variable]:
         return self.__parameters
+
     @property
-    def precondition(self):
+    def precondition(self) -> Union[AtomicFormula,NotFormula,AndFormula]:
         return self.__precondition
+
     @property
-    def network(self):
+    def network(self) -> 'TaskNetwork':
         return self.__tn
 
 class TaskNetwork(object):
-    def __init__(self, subtasks, ordering):
+    """ Task network model
+
+    :param subtasks: subtasks of the method, as a list of (id, formula) pairs
+    :param ordering: ordering relation between subtasks, as a dict where keys
+        are task ids, and values are the task ids ordered after the key
+    """
+    def __init__(self,
+                 subtasks: List[Tuple[str, AtomicFormula]],
+                 ordering: Dict[str, List[str]]):
         self.__subtasks = subtasks
         self.__ordering = ordering
+
     @property
-    def subtasks(self):
+    def subtasks(self) -> List[Tuple[str, AtomicFormula]]:
         return self.__subtasks
+
     @property
-    def ordering(self):
+    def ordering(self) -> Dict[str, List[str]]:
         return self.__ordering

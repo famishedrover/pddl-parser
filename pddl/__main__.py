@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from .parser_helpers import parse_domain, parse_problem
+from .parsing import parse_domain, parse_problem
 from .writer import write_problem, write_domain
 
 if __name__ == '__main__':
