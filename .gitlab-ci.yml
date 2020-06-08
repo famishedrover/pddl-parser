@@ -6,9 +6,9 @@ pages:
   - pip install -U sphinx
   - pip install sphinx-autopackagesummary
   - pip install sphinx-autodoc-typehints
-  - PYTHONPATH=. sphinx-build doc/src/ doc/html/
+  - PYTHONPATH=. sphinx-build doc/src/ public
   artifacts:
     paths:
-    - doc/html
+    - public
   only:
   - master
