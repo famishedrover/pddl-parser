@@ -6,6 +6,7 @@ pages:
   - pip install -U sphinx
   - pip install sphinx-autopackagesummary
   - pip install sphinx-autodoc-typehints
+  - pip install antlr4-python3-runtime
   - PYTHONPATH=. sphinx-build doc/src/ public
   artifacts:
     paths:

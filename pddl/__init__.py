@@ -6,4 +6,12 @@
 #from .writer import write_problem, write_domain
 #from .hierarchy import Task, Method, TaskNetwork
 
-__all__ = ["parsing", "belief", "domain", "formula", "problem", "writer", "hierarchy"]
+__all__ = [
+    "parsing",
+    "belief",
+    "domain",
+    "formula",
+    "problem",
+    "writer",
+    "hierarchy",
+    "variable"]
