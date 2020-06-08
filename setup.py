@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""PDDL parser setup file."""
 
 from distutils.core import setup
 
@@ -8,4 +9,4 @@ setup(name='pddl',
       author='Charles Lesire',
       author_email='charles.lesire@onera.fr',
       packages=['pddl', 'pddl.parser'],
-     )
+      )

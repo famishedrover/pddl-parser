@@ -1,4 +1,4 @@
-''' PDDL Parser visitor '''
+"""PDDL Parser visitor."""
 
 from collections import defaultdict
 import itertools
@@ -11,15 +11,18 @@ from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
 
+
 class PDDLVisitor(AbstractPDDLVisitor):
-    ''' PDDL Visitor implementation '''
+
+    """PDDL Visitor implementation."""
 
     def __init__(self):
+        """Construct the Visitor."""
         AbstractPDDLVisitor.__init__(self)
         self.task_index = 0
 
     def index_task(self):
-        ''' Compute task index if tasks not indexed in input file '''
+        """Compute task index if tasks not indexed in input file."""
         i = self.task_index
         self.task_index += 1
         return i
@@ -27,10 +30,13 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitDomain(self, ctx):
         ops = [self.visit(o) for o in ctx.operators]
         return Domain(ctx.name.text,
-                      requirements=self.visit(ctx.requirements) if ctx.requirements else None,
+                      requirements=(self.visit(ctx.requirements)
+                                    if ctx.requirements else None),
                       types=self.visit(ctx.types) if ctx.types else None,
-                      constants=self.visit(ctx.constants) if ctx.constants else None,
-                      predicates=self.visit(ctx.predicates) if ctx.predicates else None,
+                      constants=(self.visit(ctx.constants)
+                                 if ctx.constants else None),
+                      predicates=(self.visit(ctx.predicates)
+                                  if ctx.predicates else None),
                       actions=[a for a in ops if isinstance(a, Action)],
                       tasks=[a for a in ops if isinstance(a, Task)],
                       methods=[a for a in ops if isinstance(a, Method)])
@@ -52,7 +58,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitTypedObjList(self, ctx):
         if ctx.objtype:
-            typed_list = [Constant(t.text, ctx.objtype.text) for t in ctx.names]
+            typed_list = [Constant(t.text, ctx.objtype.text)
+                          for t in ctx.names]
         else:
             typed_list = [Constant(t.text) for t in ctx.names]
         if ctx.typedObjList():
@@ -61,7 +68,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitTypedVarList(self, ctx):
         if ctx.vartype:
-            typed_list = [Variable(t.text, ctx.vartype.text) for t in ctx.names]
+            typed_list = [Variable(t.text, ctx.vartype.text)
+                          for t in ctx.names]
         else:
             typed_list = [Variable(t.text) for t in ctx.names]
         if ctx.typedVarList():
@@ -75,7 +83,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return [self.visit(p) for p in ctx.predicateDef()]
 
     def visitPredicateDef(self, ctx):
-        return Predicate(str(ctx.predicate.NAME()), self.visit(ctx.typedVarList()))
+        return Predicate(str(ctx.predicate.NAME()),
+                         self.visit(ctx.typedVarList()))
 
     def visitStructureDef(self, ctx):
         if ctx.actionDef():
@@ -88,20 +97,26 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitActionDef(self, ctx):
         return Action(ctx.name.text,
-                      parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
-                      precondition=(self.visit(ctx.precondition) if ctx.precondition else None),
+                      parameters=(self.visit(ctx.parameters)
+                                  if ctx.parameters else None),
+                      precondition=(self.visit(ctx.precondition)
+                                    if ctx.precondition else None),
                       effect=(self.visit(ctx.effect) if ctx.effect else None),
-                      observe=(self.visit(ctx.observe) if ctx.observe else None))
+                      observe=(self.visit(ctx.observe)
+                               if ctx.observe else None))
 
     def visitTaskDef(self, ctx):
         return Task(ctx.name.text,
-                    parameters=(self.visit(ctx.parameters) if ctx.parameters else None))
+                    parameters=(self.visit(ctx.parameters)
+                                if ctx.parameters else None))
 
     def visitMethodDef(self, ctx):
         return Method(ctx.name.text,
                       self.visit(ctx.task),
-                      parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
-                      precondition=(self.visit(ctx.precondition) if ctx.precondition else None),
+                      parameters=(self.visit(ctx.parameters)
+                                  if ctx.parameters else None),
+                      precondition=(self.visit(ctx.precondition)
+                                    if ctx.precondition else None),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))
 
     def visitTaskNetworkDef(self, ctx):
@@ -129,7 +144,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return [self.visit(s) for s in ctx.tasks]
 
     def visitSubtaskDef(self, ctx):
-        return ((f'task{self.index_task()}' if ctx.taskId is None else ctx.taskId.text),
+        return ((f'task{self.index_task()}'
+                 if ctx.taskId is None else ctx.taskId.text),
                 self.visit(ctx.atomicFormula()))
 
     def visitGoalDef(self, ctx):
@@ -147,7 +163,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.atomicFormula())
 
     def visitAtomicFormula(self, ctx):
-        return AtomicFormula(str(ctx.predicate.NAME()), [self.visit(t) for t in ctx.arguments])
+        return AtomicFormula(str(ctx.predicate.NAME()),
+                             [self.visit(t) for t in ctx.arguments])
 
     def visitTerm(self, ctx):
         if ctx.NAME():
@@ -161,9 +178,11 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitCEffect(self, ctx):
         if ctx.FORALL():
-            return None # TODO
+            # TODO
+            return None
         if ctx.WHEN():
-            return WhenEffect(self.visit(ctx.goalDef()), self.visit(ctx.condEffect()))
+            return WhenEffect(self.visit(ctx.goalDef()),
+                              self.visit(ctx.condEffect()))
         return self.visit(ctx.literal())
 
     def visitCondEffect(self, ctx):
@@ -181,7 +200,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
             self.visit(ctx.init()),
             goal=(self.visit(ctx.goal()) if ctx.goal() else None),
             htn=(self.visit(ctx.htn) if ctx.htn else None),
-            requirements=(self.visit(ctx.requirements) if ctx.requirements else None),
+            requirements=(self.visit(ctx.requirements)
+                          if ctx.requirements else None),
             objects=(self.visit(ctx.objects) if ctx.objects else None)
         )
 
@@ -205,5 +225,6 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitHtnDef(self, ctx):
         return Method(None, None,
-                      parameters=(self.visit(ctx.parameters) if ctx.parameters else None),
+                      parameters=(self.visit(ctx.parameters)
+                                  if ctx.parameters else None),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))

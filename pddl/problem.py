@@ -1,4 +1,4 @@
-""" Description of a PDDL problem. """
+"""Description of a PDDL problem."""
 
 from typing import List, Union
 
@@ -8,11 +8,14 @@ from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Method
 
 LITERAL = Union[AtomicFormula, NotFormula]
-INITELT = Union[AtomicFormula, NotFormula, UnknownLiteral, OrBelief, OneOfBelief]
+INITELT = Union[AtomicFormula, NotFormula, UnknownLiteral,
+                OrBelief, OneOfBelief]
 GOAL = Union[AtomicFormula, NotFormula, AndFormula]
 
-class Problem(object):
-    """ PDDL problem
+
+class Problem:
+
+    """PDDL problem.
 
     :param name: problem name
     :param domain: domain name
@@ -22,6 +25,7 @@ class Problem(object):
     :param requirements: list of requirements
     :param objects: list of objects of the problem
     """
+
     def __init__(self,
                  name: str,
                  domain: str,
@@ -40,35 +44,35 @@ class Problem(object):
 
     @property
     def name(self) -> str:
-        ''' Get name '''
+        """Get name."""
         return self.__name
 
     @property
     def domain(self) -> str:
-        ''' Get domain '''
+        """Get domain."""
         return self.__domain
 
     @property
     def init(self) -> List[INITELT]:
-        ''' Get initial state '''
+        """Get initial state."""
         return self.__init
 
     @property
     def goal(self) -> GOAL:
-        ''' Get goal literals '''
+        """Get goal literals."""
         return self.__goal
 
     @property
     def requirements(self) -> List[str]:
-        ''' Get list of requirements '''
+        """Get list of requirements."""
         return self.__requirements
 
     @property
     def objects(self) -> List[Constant]:
-        ''' Get problem objects '''
+        """Get problem objects."""
         return self.__objects
 
     @property
     def htn(self) -> Method:
-        ''' Get HTN goal '''
+        """Get HTN goal."""
         return self.__htn

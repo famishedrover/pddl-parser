@@ -1,14 +1,14 @@
-"""
-Classes related to the Domain description.
-"""
+"""Classes related to the Domain description."""
 
 from typing import List, Union, Optional
 from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
 from .variable import Type, Constant, Variable, Predicate
 from .hierarchy import Task, Method
 
-class Action(object):
-    """ PDDL action
+
+class Action:
+
+    """PDDL action.
 
     :param name: action name
     :param parameters: action parameters
@@ -16,10 +16,13 @@ class Action(object):
     :param effect: action state effect
     :param observe: action observation effect
     """
+
     def __init__(self, name: str,
                  parameters: List[Variable] = (),
-                 precondition: Union[AtomicFormula, NotFormula, AndFormula] = None,
-                 effect: Union[AtomicFormula, NotFormula, AndFormula, WhenEffect] = None,
+                 precondition: Union[AtomicFormula,
+                                     NotFormula, AndFormula] = None,
+                 effect: Union[AtomicFormula,
+                               NotFormula, AndFormula, WhenEffect] = None,
                  observe: AtomicFormula = None):
         self.__name = name
         self.__parameters = parameters
@@ -29,31 +32,34 @@ class Action(object):
 
     @property
     def name(self) -> str:
-        ''' Get name '''
+        """Get name."""
         return self.__name
 
     @property
     def parameters(self) -> List[Variable]:
-        ''' Get parameters '''
+        """Get parameters."""
         return self.__parameters
 
     @property
     def precondition(self) -> Union[AtomicFormula, NotFormula, AndFormula]:
-        ''' Get precondition '''
+        """Get precondition."""
         return self.__precondition
 
     @property
-    def effect(self) -> Union[AtomicFormula, NotFormula, AndFormula, WhenEffect]:
-        ''' Get effect '''
+    def effect(self) -> Union[AtomicFormula,
+                              NotFormula, AndFormula, WhenEffect]:
+        """Get effect."""
         return self.__effect
 
     @property
     def observe(self) -> Optional[AtomicFormula]:
-        ''' Get observation effect '''
+        """Get observation effect."""
         return self.__observe
 
-class Domain(object):
-    """ PDDL domain
+
+class Domain:
+
+    """PDDL domain.
 
     :param name: domain name
     :param requirements: list of domain requirements
@@ -64,6 +70,7 @@ class Domain(object):
     :param tasks: domain tasks
     :param methods: domain methods
     """
+
     def __init__(self, name: str,
                  requirements: List[str] = (),
                  types: List[Type] = (),
@@ -83,40 +90,40 @@ class Domain(object):
 
     @property
     def name(self) -> str:
-        ''' Get name '''
+        """Get name."""
         return self.__name
 
     @property
     def requirements(self) -> List[str]:
-        ''' Get list of requirements '''
+        """Get list of requirements."""
         return self.__requirements
 
     @property
     def types(self) -> List[Type]:
-        ''' Get set of types '''
+        """Get set of types."""
         return self.__types
 
     @property
     def constants(self) -> List[Constant]:
-        ''' Get set of constants '''
+        """Get set of constants."""
         return self.__constants
 
     @property
     def predicates(self) -> List[Predicate]:
-        ''' Get predicates '''
+        """Get predicates."""
         return self.__predicates
 
     @property
     def actions(self) -> List[Action]:
-        ''' Get actions '''
+        """Get actions."""
         return self.__actions
 
     @property
     def tasks(self) -> List[Task]:
-        ''' Get tasks '''
+        """Get tasks."""
         return self.__tasks
 
     @property
     def methods(self) -> List[Method]:
-        ''' Get methods '''
+        """Get methods."""
         return self.__methods

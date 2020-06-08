@@ -1,38 +1,42 @@
-"""
-Classes related to initial belief model.
-"""
+"""Classes related to initial belief model."""
 
 from typing import Union, List
 from .formula import AtomicFormula, NotFormula
 LITERAL = Union[AtomicFormula, NotFormula]
 
-class UnknownLiteral(object):
-    """ Unknown literal
+
+class UnknownLiteral:
+
+    """Unknown literal.
 
     :param formula: the unknown literal
     """
+
     def __init__(self, formula: AtomicFormula):
         self.__formula = formula
 
     @property
     def formula(self) -> AtomicFormula:
-        ''' Get formula '''
+        """Get formula."""
         return self.__formula
 
     def __str__(self):
         return '(unknown ' + str(self.formula) + ')'
 
-class OrBelief(object):
-    """ Choice belief
+
+class OrBelief:
+
+    """Choice belief.
 
     :param literals: possible initial believes
     """
+
     def __init__(self, literals: List[LITERAL]):
         self.__literals = literals
 
     @property
     def literals(self) -> List[LITERAL]:
-        ''' Get choice literals '''
+        """Get choice literals."""
         return self.__literals
 
     def __str__(self):
@@ -42,17 +46,20 @@ class OrBelief(object):
         pddl += ')'
         return pddl
 
-class OneOfBelief(object):
-    """ Exclusive choice belief
+
+class OneOfBelief:
+
+    """Exclusive choice belief.
 
     :param literals: possible exclusive initial believes
     """
+
     def __init__(self, literals: List[LITERAL]):
         self.__literals = literals
 
     @property
     def literals(self) -> List[LITERAL]:
-        ''' Get choice literals '''
+        """Get choice literals."""
         return self.__literals
 
     def __str__(self):
