@@ -1,8 +1,8 @@
 # PDDL Parser
 
-[![build status](https://gitlab.com/gitlab-org/gitlab-docs/badges/master/pipeline.svg)](https://gitlab.com/gitlab-org/gitlab-docs/commits/master)
+[![build status](https://gitlab.com/oara-architecture/planning/pddl-python/badges/master/pipeline.svg)](https://gitlab.com/oara-architecture/planning/pddl-python/commits/master)
 
-When build is successful, it automatically build the PDDL parser [API Documentation](https://oara-architecture.gitlab.io/planning/pddl-parser).
+When build is successful, it automatically builds the PDDL parser [API Documentation](https://oara-architecture.gitlab.io/planning/pddl-python).
 
 ## Generating the parser from the grammar
 
