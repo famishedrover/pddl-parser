@@ -5,6 +5,7 @@ pages:
   script:
   - pip install -U sphinx
   - pip install sphinx-autopackagesummary
+  - pip install sphinx-autodoc-typehints
   - PYTHONPATH=. sphinx-build doc/src/ doc/html/
   artifacts:
     paths:
