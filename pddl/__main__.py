@@ -16,7 +16,7 @@ def main():
     # parse domain
     def parser_domain_func(args):
         """parse_domain command function."""
-        model = parse_domain(args.file, args.verbose)
+        model = parse_domain(args.file, verbose=args.verbose, file_stream=True)
         if args.pprint:
             print(write_domain(model))
 
@@ -29,7 +29,7 @@ def main():
     # parse problem
     def parser_problem_func(args):
         """parse_problem command function."""
-        model = parse_problem(args.file, args.verbose)
+        model = parse_problem(args.file, verbose=args.verbose, file_stream=True)
         if args.pprint:
             print(write_problem(model))
 

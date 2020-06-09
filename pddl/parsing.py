@@ -8,7 +8,7 @@ from .domain import Domain
 from .problem import Problem
 
 
-def parse_pddl(file):
+def parse_pddl_file(file: str):
     """Parse a PDDL file and returns the parsed tree."""
     input_stream = antlr4.FileStream(file)
     lexer = PDDLLexer(input_stream)
@@ -16,14 +16,27 @@ def parse_pddl(file):
     return PDDLParser(stream)
 
 
-def parse_domain(file: str, verbose: bool = False) -> Domain:
+def parse_pddl_str(pddl: str):
+    """Parse a PDDL string and returns the parsed tree."""
+    input_stream = antlr4.InputStream(pddl)
+    lexer = PDDLLexer(input_stream)
+    stream = antlr4.CommonTokenStream(lexer)
+    return PDDLParser(stream)
+
+
+def parse_domain(pddl: str,
+                 verbose: bool = False,
+                 file_stream: bool = False) -> Domain:
     """Parse a PDDL domain.
 
-    :param file: PDDL domain file name
+    :param pddl: PDDL domain input
     :param verbose: display the parsed tree
     :return: the PDDL domain object
     """
-    parser = parse_pddl(file)
+    if file_stream:
+        parser = parse_pddl_file(pddl)
+    else:
+        parser = parse_pddl_str(pddl)
     tree = parser.domain()
     if verbose:
         print(tree.toStringTree(recog=parser))
@@ -31,14 +44,19 @@ def parse_domain(file: str, verbose: bool = False) -> Domain:
     return vis.visitDomain(tree)
 
 
-def parse_problem(file: str, verbose: bool = False) -> Problem:
+def parse_problem(pddl: str,
+                  verbose: bool = False,
+                  file_stream: bool = False) -> Problem:
     """Parse a PDDL problem.
 
-    :param file: PDDL problem file name
+    :param pddl: PDDL problem input
     :param verbose: display the parsed tree
     :return: the PDDL problem object
     """
-    parser = parse_pddl(file)
+    if file_stream:
+        parser = parse_pddl_file(pddl)
+    else:
+        parser = parse_pddl_str(pddl)
     tree = parser.problem()
     if verbose:
         print(tree.toStringTree(recog=parser))
