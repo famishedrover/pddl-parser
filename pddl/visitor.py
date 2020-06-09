@@ -31,18 +31,19 @@ class PDDLVisitor(AbstractPDDLVisitor):
         ops = [self.visit(o) for o in ctx.operators]
         return Domain(ctx.name.text,
                       requirements=(self.visit(ctx.requirements)
-                                    if ctx.requirements else None),
-                      types=self.visit(ctx.types) if ctx.types else None,
+                                    if ctx.requirements else frozenset()),
+                      types=(self.visit(ctx.types) if ctx.types
+                             else frozenset()),
                       constants=(self.visit(ctx.constants)
-                                 if ctx.constants else None),
+                                 if ctx.constants else frozenset()),
                       predicates=(self.visit(ctx.predicates)
-                                  if ctx.predicates else None),
+                                  if ctx.predicates else frozenset()),
                       actions=[a for a in ops if isinstance(a, Action)],
                       tasks=[a for a in ops if isinstance(a, Task)],
                       methods=[a for a in ops if isinstance(a, Method)])
 
     def visitRequireDef(self, ctx):
-        return [k.text for k in ctx.keys]
+        return frozenset(k.text for k in ctx.keys)
 
     def visitTypesDef(self, ctx):
         return self.visit(ctx.types)
