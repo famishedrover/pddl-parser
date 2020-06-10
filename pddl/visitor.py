@@ -99,10 +99,10 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitActionDef(self, ctx):
         return Action(ctx.name.text,
                       parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else None),
+                                  if ctx.parameters else ()),
                       precondition=(self.visit(ctx.precondition)
-                                    if ctx.precondition else None),
-                      effect=(self.visit(ctx.effect) if ctx.effect else None),
+                                    if ctx.precondition else ()),
+                      effect=(self.visit(ctx.effect) if ctx.effect else ()),
                       observe=(self.visit(ctx.observe)
                                if ctx.observe else None))
 
@@ -115,9 +115,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return Method(ctx.name.text,
                       self.visit(ctx.task),
                       parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else None),
+                                  if ctx.parameters else ()),
                       precondition=(self.visit(ctx.precondition)
-                                    if ctx.precondition else None),
+                                    if ctx.precondition else ()),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))
 
     def visitTaskNetworkDef(self, ctx):
@@ -175,12 +175,12 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitEffectDef(self, ctx):
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return self.visit(ctx.cEffect(0))
+        return AndFormula([self.visit(ctx.cEffect(0))])
 
     def visitCEffect(self, ctx):
         if ctx.FORALL():
             # TODO
-            return None
+            return ()
         if ctx.WHEN():
             return WhenEffect(self.visit(ctx.goalDef()),
                               self.visit(ctx.condEffect()))
@@ -189,7 +189,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitCondEffect(self, ctx):
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return self.visit(ctx.literal(0))
+        return AndFormula([self.visit(ctx.literal(0))])
 
     def visitObserveDef(self, ctx):
         return self.visit(ctx.atomicFormula())

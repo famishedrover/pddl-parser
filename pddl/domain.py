@@ -19,10 +19,8 @@ class Action:
 
     def __init__(self, name: str,
                  parameters: List[Variable] = (),
-                 precondition: Union[AtomicFormula,
-                                     NotFormula, AndFormula] = None,
-                 effect: Union[AtomicFormula,
-                               NotFormula, AndFormula, WhenEffect] = None,
+                 precondition: AndFormula = None,
+                 effect: AndFormula = None,
                  observe: AtomicFormula = None):
         self.__name = name
         self.__parameters = parameters
@@ -41,13 +39,12 @@ class Action:
         return self.__parameters
 
     @property
-    def precondition(self) -> Union[AtomicFormula, NotFormula, AndFormula]:
+    def precondition(self) -> AndFormula:
         """Get precondition."""
         return self.__precondition
 
     @property
-    def effect(self) -> Union[AtomicFormula,
-                              NotFormula, AndFormula, WhenEffect]:
+    def effect(self) -> AndFormula:
         """Get effect."""
         return self.__effect
 
