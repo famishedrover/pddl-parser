@@ -175,7 +175,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitEffectDef(self, ctx):
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return AndFormula([self.visit(ctx.cEffect(0))])
+        if ctx.cEffect():
+            return AndFormula([self.visit(ctx.cEffect(0))])
+        return AndFormula([])
 
     def visitCEffect(self, ctx):
         if ctx.FORALL():
