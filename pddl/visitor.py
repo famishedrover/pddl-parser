@@ -156,7 +156,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
             return self.visit(ctx.atomicFormula())
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return None
+        return AndFormula([])
 
     def visitLiteral(self, ctx):
         if ctx.NOT():
@@ -204,8 +204,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
             goal=(self.visit(ctx.goal()) if ctx.goal() else None),
             htn=(self.visit(ctx.htn) if ctx.htn else None),
             requirements=(self.visit(ctx.requirements)
-                          if ctx.requirements else None),
-            objects=(self.visit(ctx.objects) if ctx.objects else None)
+                          if ctx.requirements else []),
+            objects=(self.visit(ctx.objects) if ctx.objects else [])
         )
 
     def visitObjectDeclaration(self, ctx):
