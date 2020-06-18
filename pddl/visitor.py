@@ -227,7 +227,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.goalDef())
 
     def visitHtnDef(self, ctx):
-        return Method(None, None,
+        return Method('goal', AtomicFormula('goal'),
                       parameters=(self.visit(ctx.parameters)
                                   if ctx.parameters else None),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))

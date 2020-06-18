@@ -43,7 +43,7 @@ class Method:
     :param tn: method task network
     """
 
-    def __init__(self, name: str, task: str,
+    def __init__(self, name: str, task: AtomicFormula,
                  parameters: List[Variable] = None,
                  precondition: Union[AtomicFormula,
                                      NotFormula, AndFormula] = None,
@@ -60,8 +60,8 @@ class Method:
         return self.__name
 
     @property
-    def task(self) -> str:
-        """Get task name."""
+    def task(self) -> AtomicFormula:
+        """Get task predicate."""
         return self.__task
 
     @property
