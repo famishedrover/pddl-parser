@@ -1,6 +1,6 @@
 """Classes related to the Domain description."""
 
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict, Iterator
 from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
 from .variable import Type, Constant, Variable, Predicate
 from .hierarchy import Task, Method
@@ -73,9 +73,9 @@ class Domain:
                  types: List[Type] = (),
                  constants: List[Constant] = (),
                  predicates: List[Predicate] = (),
-                 actions: List[Action] = (),
-                 tasks: List[Task] = (),
-                 methods: List[Method] = ()):
+                 actions: Dict[str, Action] = dict(),
+                 tasks: Dict[str, Task] = dict(),
+                 methods: Dict[str, Method] = dict()):
         self.__name = name
         self.__requirements = requirements
         self.__types = types
@@ -84,6 +84,8 @@ class Domain:
         self.__actions = actions
         self.__tasks = tasks
         self.__methods = methods
+        for method in self.__methods.values():
+            self.__tasks[method.task.name].add_method(method)
 
     @property
     def name(self) -> str:
@@ -111,16 +113,28 @@ class Domain:
         return self.__predicates
 
     @property
-    def actions(self) -> List[Action]:
+    def actions(self) -> Iterator[Action]:
         """Get actions."""
-        return self.__actions
+        return self.__actions.values()
+
+    def get_action(self, action: str) -> Action:
+        """Get action by name."""
+        return self.__actions[action]
 
     @property
-    def tasks(self) -> List[Task]:
+    def tasks(self) -> Iterator[Task]:
         """Get tasks."""
-        return self.__tasks
+        return self.__tasks.values()
+
+    def get_task(self, task: str) -> Action:
+        """Get task by name."""
+        return self.__tasks[task]
 
     @property
-    def methods(self) -> List[Method]:
+    def methods(self) -> Iterator[Method]:
         """Get methods."""
-        return self.__methods
+        return self.__methods.values()
+
+    def get_method(self, method:str) -> Method:
+        """Get method by name."""
+        return self.__methods[method]

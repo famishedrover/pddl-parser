@@ -38,9 +38,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
                                  if ctx.constants else frozenset()),
                       predicates=(self.visit(ctx.predicates)
                                   if ctx.predicates else frozenset()),
-                      actions=[a for a in ops if isinstance(a, Action)],
-                      tasks=[a for a in ops if isinstance(a, Task)],
-                      methods=[a for a in ops if isinstance(a, Method)])
+                      actions={a.name: a for a in ops if isinstance(a, Action)},
+                      tasks={a.name: a for a in ops if isinstance(a, Task)},
+                      methods={a.name: a for a in ops if isinstance(a, Method)})
 
     def visitRequireDef(self, ctx):
         return frozenset(k.text for k in ctx.keys)
@@ -227,7 +227,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.goalDef())
 
     def visitHtnDef(self, ctx):
-        return Method('goal', AtomicFormula('goal'),
+        return Method('__top_method', AtomicFormula('__top'),
                       parameters=(self.visit(ctx.parameters)
                                   if ctx.parameters else None),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))
