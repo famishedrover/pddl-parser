@@ -18,11 +18,21 @@ class Task:
                  parameters: List[Variable] = ()):
         self.__name = name
         self.__parameters = parameters
+        self.__methods = []
 
     @property
     def name(self) -> str:
         """Get name."""
         return self.__name
+
+    @property
+    def methods(self):
+        return self.__methods
+
+    def add_method(self, method: 'Method'):
+        if method.task.name != self.name:
+            raise AttributeError(f"Method {method.name} does not refine task {self.name}")
+        self.__methods.append(method)
 
     @property
     def parameters(self) -> List[Variable]:
