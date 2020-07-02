@@ -62,3 +62,6 @@ class Predicate:
     def variables(self) -> List[Variable]:
         """Get variables."""
         return self.__variables
+
+    def __str__(self):
+        return f"{self.__name} {' '.join(map(str, self.__variables))}"
