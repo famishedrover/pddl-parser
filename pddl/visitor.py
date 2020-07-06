@@ -7,7 +7,7 @@ from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
 
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
 from .problem import Problem
-from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
+from .formula import AtomicFormula, NotFormula, AndFormula, ForallFormula, WhenEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
 
@@ -154,6 +154,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
             return self.visit(ctx.literal())
         if ctx.atomicFormula():
             return self.visit(ctx.atomicFormula())
+        if ctx.FORALL():
+            return ForallFormula(self.visit(ctx.variables), self.visit(ctx.gd))
         if ctx.AND():
             return AndFormula([self.visit(gd) for gd in ctx.ands])
         return AndFormula([])

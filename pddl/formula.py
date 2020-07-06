@@ -3,6 +3,7 @@
 from typing import List, Union
 GOAL = Union['AtomicFormula', 'NotFormula', 'AndFormula']
 
+from .variable import Variable
 
 class AtomicFormula:
 
@@ -74,6 +75,27 @@ class AndFormula:
             pddl += ' ' + str(formula)
         pddl += ')'
         return pddl
+
+
+class ForallFormula:
+
+    """(forall (<variables>*) <gd>).
+
+    """
+    def __init__(self, variables: List[Variable], goal: GOAL):
+        self.__variables = variables
+        self.__goal = goal
+
+    @property
+    def variables(self):
+        return self.__variables
+
+    @property
+    def goal(self):
+        return self.__goal
+
+    def __str__(self):
+        return f"(forall ({' '.join(map(str, self.variables))}) {self.goal})"
 
 
 class WhenEffect:

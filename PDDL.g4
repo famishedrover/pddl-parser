@@ -59,7 +59,7 @@ goalDef
   | atomicFormula
   | literal // :negative-precondition
   // :disjunctive-preconditions
-  // :universal-preconditions
+  | LP FORALL LP variables=typedVarList RP gd=goalDef RP // :universal-preconditions
   // :existential-preconditions
   // :fluents
   | LP AND ands+=goalDef* RP
@@ -119,7 +119,7 @@ taskNetworkDef
 subtasksDef
   : LP RP
   | tasks+=subtaskDef
-  | LP AND tasks+=subtaskDef+ RP;
+  | LP AND tasks+=subtaskDef* RP;
 
 subtaskDef
   : LP taskId=NAME atomicFormula RP
@@ -232,7 +232,7 @@ REQUIRE_KEY:
  | ':durative-actions' //	Allows durative actions. Note that this does not imply :fluents.
  | ':duration-inequalities' //	Allows duration constraints in durative actions using inequalities.
  | ':continuous-effects' //	Allows durative actions to affect fluents	continuously over the duration of the actions.
- | ':hierachie' // HDDL
+ | ':hierachie' | ':hierarchy' // HDDL
 ;
 
 /*
