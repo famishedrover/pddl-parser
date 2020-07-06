@@ -1,7 +1,7 @@
 """PDDL parser in python."""
 
 from .variable import Type, Constant, Variable, Predicate
-from .formula import NotFormula, AndFormula, AtomicFormula, WhenEffect
+from .formula import NotFormula, AndFormula, AtomicFormula, WhenEffect, ForallFormula
 from .hierarchy import Task, Method, TaskNetwork
 from .domain import Action, Domain
 from .belief import UnknownLiteral, OneOfBelief, OrBelief
