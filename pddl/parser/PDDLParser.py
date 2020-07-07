@@ -204,7 +204,7 @@ def serializedATN():
         buf.write(u"\3\2\2\2\u018a\u018b\3\2\2\2\u018b\u018c\7\4\2\2\u018c")
         buf.write(u"\u018e\3\2\2\2\u018d\u0181\3\2\2\2\u018d\u0183\3\2\2")
         buf.write(u"\2\u018d\u0184\3\2\2\2\u018e\65\3\2\2\2\u018f\u0190\7")
-        buf.write(u"\3\2\2\u0190\u0191\7(\2\2\u0191\u0192\7\36\2\2\u0192")
+        buf.write(u"\3\2\2\u0190\u0191\7\36\2\2\u0191\u0192\7(\2\2\u0192")
         buf.write(u"\u0193\7(\2\2\u0193\u0194\7\4\2\2\u0194\67\3\2\2\2\u0195")
         buf.write(u"\u0196\7\3\2\2\u0196\u01a2\7\4\2\2\u0197\u01a2\5:\36")
         buf.write(u"\2\u0198\u0199\7\3\2\2\u0199\u019b\7 \2\2\u019a\u019c")
@@ -2910,9 +2910,9 @@ class PDDLParser ( Parser ):
             self.state = 397
             self.match(PDDLParser.LP)
             self.state = 398
-            localctx.head = self.match(PDDLParser.NAME)
-            self.state = 399
             self.match(PDDLParser.BEFORE)
+            self.state = 399
+            localctx.head = self.match(PDDLParser.NAME)
             self.state = 400
             localctx._NAME = self.match(PDDLParser.NAME)
             localctx.tail.append(localctx._NAME)

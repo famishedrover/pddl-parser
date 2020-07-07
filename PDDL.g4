@@ -130,7 +130,7 @@ orderingDefs
   | order+=orderingDef
   | LP AND order+=orderingDef+ RP;
 
-orderingDef: LP head=NAME BEFORE tail+=NAME RP;
+orderingDef: LP BEFORE head=NAME tail+=NAME RP;
 
 constraintDefs
   : LP RP
@@ -232,7 +232,7 @@ REQUIRE_KEY:
  | ':durative-actions' //	Allows durative actions. Note that this does not imply :fluents.
  | ':duration-inequalities' //	Allows duration constraints in durative actions using inequalities.
  | ':continuous-effects' //	Allows durative actions to affect fluents	continuously over the duration of the actions.
- | ':hierachie' | ':hierarchy' // HDDL
+ | ':hierachie' | ':hierarchy' | ':method-precondition' // HDDL
 ;
 
 /*
