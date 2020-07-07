@@ -2,11 +2,12 @@
 """PDDL Parser entry point."""
 
 import argparse
+import logging
 import sys
 
 from .parsing import parse_domain, parse_problem
 from .writer import write_problem, write_domain
-
+from .logger import LOGGER, setup_logging
 
 def main():
     """Implement main function."""
@@ -16,7 +17,14 @@ def main():
     # parse domain
     def parser_domain_func(args):
         """parse_domain command function."""
-        model = parse_domain(args.file, verbose=args.verbose, file_stream=True)
+        model = parse_domain(args.file, file_stream=True)
+        LOGGER.info("PDDL domain: %s", model.name)
+        LOGGER.info("PDDL requirements: %s", ", ".join(model.requirements))
+        LOGGER.info("PDDL types: %s", ", ".join(map(str,model.types)))
+        LOGGER.info("PDDL predicates: %d", len(model.predicates))
+        LOGGER.info("PDDL actions: %d", len(model.actions))
+        LOGGER.info("PDDL tasks: %d", len(model.tasks))
+        LOGGER.info("PDDL methods: %d", len(model.methods))
         if args.pprint:
             print(write_domain(model))
 
@@ -29,7 +37,11 @@ def main():
     # parse problem
     def parser_problem_func(args):
         """parse_problem command function."""
-        model = parse_problem(args.file, verbose=args.verbose, file_stream=True)
+        model = parse_problem(args.file, file_stream=True)
+        LOGGER.info("PDDL problem: %s", model.name)
+        LOGGER.info("PDDL domain: %s", model.domain)
+        LOGGER.info("PDDL objects: %d", len(model.objects))
+        LOGGER.info("PDDL init size: %d", len(model.init))
         if args.pprint:
             print(write_problem(model))
 
@@ -40,12 +52,17 @@ def main():
     parser_problem.set_defaults(func=parser_problem_func)
 
     # common args
-    parser.add_argument('-v', '--verbose',
-                        help='verbose parsing result', action='store_true')
+    parser.add_argument("-d", "--debug", help="Activate debug logs",
+                        action='store_const', dest="loglevel",
+                        const=logging.DEBUG, default=logging.WARNING)
+    parser.add_argument("-v", "--verbose", help="Activate verbose logs",
+                        action='store_const', dest="loglevel",
+                        const=logging.INFO, default=logging.WARNING)
     parser.add_argument('-p', '--pprint',
                         help='pretty print the parsed model',
                         action='store_true')
     args = parser.parse_args()
+    setup_logging(args.loglevel)
 
     try:
         args.func

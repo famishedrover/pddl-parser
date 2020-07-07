@@ -6,7 +6,7 @@ from .parser.PDDLParser import PDDLParser
 from .visitor import PDDLVisitor
 from .domain import Domain
 from .problem import Problem
-
+from .logger import LOGGER
 
 def parse_pddl_file(file: str):
     """Parse a PDDL file and returns the parsed tree."""
@@ -25,7 +25,6 @@ def parse_pddl_str(pddl: str):
 
 
 def parse_domain(pddl: str,
-                 verbose: bool = False,
                  file_stream: bool = False) -> Domain:
     """Parse a PDDL domain.
 
@@ -38,14 +37,12 @@ def parse_domain(pddl: str,
     else:
         parser = parse_pddl_str(pddl)
     tree = parser.domain()
-    if verbose:
-        print(tree.toStringTree(recog=parser))
+    LOGGER.debug(tree.toStringTree(recog=parser))
     vis = PDDLVisitor()
     return vis.visitDomain(tree)
 
 
 def parse_problem(pddl: str,
-                  verbose: bool = False,
                   file_stream: bool = False) -> Problem:
     """Parse a PDDL problem.
 
@@ -58,7 +55,6 @@ def parse_problem(pddl: str,
     else:
         parser = parse_pddl_str(pddl)
     tree = parser.problem()
-    if verbose:
-        print(tree.toStringTree(recog=parser))
+    LOGGER.debug(tree.toStringTree(recog=parser))
     vis = PDDLVisitor()
     return vis.visitProblem(tree)
