@@ -63,12 +63,12 @@ def serializedATN():
         buf.write(u"\"\16\"\u01f5\3\"\3\"\3\"\5\"\u01fb\n\"\3#\3#\3#\3#\3")
         buf.write(u"#\3$\3$\3$\3$\3$\3$\3$\5$\u0209\n$\3$\3$\3$\3%\3%\3%")
         buf.write(u"\2\2&\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,")
-        buf.write(u".\60\62\64\668:<>@BDFH\2\2\2\u0233\2L\3\2\2\2\4N\3\2")
-        buf.write(u"\2\2\6e\3\2\2\2\bn\3\2\2\2\n\u0081\3\2\2\2\f\u0083\3")
-        buf.write(u"\2\2\2\16\u0096\3\2\2\2\20\u0098\3\2\2\2\22\u00a1\3\2")
-        buf.write(u"\2\2\24\u00b4\3\2\2\2\26\u00b9\3\2\2\2\30\u00bb\3\2\2")
-        buf.write(u"\2\32\u00e8\3\2\2\2\34\u00f6\3\2\2\2\36\u010c\3\2\2\2")
-        buf.write(u" \u0118\3\2\2\2\"\u011a\3\2\2\2$\u0122\3\2\2\2&\u0124")
+        buf.write(u".\60\62\64\668:<>@BDFH\2\3\4\2\6\6((\2\u0233\2L\3\2\2")
+        buf.write(u"\2\4N\3\2\2\2\6e\3\2\2\2\bn\3\2\2\2\n\u0081\3\2\2\2\f")
+        buf.write(u"\u0083\3\2\2\2\16\u0096\3\2\2\2\20\u0098\3\2\2\2\22\u00a1")
+        buf.write(u"\3\2\2\2\24\u00b4\3\2\2\2\26\u00b9\3\2\2\2\30\u00bb\3")
+        buf.write(u"\2\2\2\32\u00e8\3\2\2\2\34\u00f6\3\2\2\2\36\u010c\3\2")
+        buf.write(u"\2\2 \u0118\3\2\2\2\"\u011a\3\2\2\2$\u0122\3\2\2\2&\u0124")
         buf.write(u"\3\2\2\2(\u0130\3\2\2\2*\u0132\3\2\2\2,\u0148\3\2\2\2")
         buf.write(u".\u0169\3\2\2\2\60\u0177\3\2\2\2\62\u017f\3\2\2\2\64")
         buf.write(u"\u018d\3\2\2\2\66\u018f\3\2\2\28\u019f\3\2\2\2:\u01ad")
@@ -256,8 +256,8 @@ def serializedATN():
         buf.write(u"\2\2\u0205\u0206\5\24\13\2\u0206\u0207\7\4\2\2\u0207")
         buf.write(u"\u0209\3\2\2\2\u0208\u0203\3\2\2\2\u0208\u0209\3\2\2")
         buf.write(u"\2\u0209\u020a\3\2\2\2\u020a\u020b\5.\30\2\u020b\u020c")
-        buf.write(u"\7\4\2\2\u020cG\3\2\2\2\u020d\u020e\7(\2\2\u020eI\3\2")
-        buf.write(u"\2\2=LXZ`jv~\u0081\u008b\u0093\u0096\u009d\u00a9\u00b1")
+        buf.write(u"\7\4\2\2\u020cG\3\2\2\2\u020d\u020e\t\2\2\2\u020eI\3")
+        buf.write(u"\2\2\2=LXZ`jv~\u0081\u008b\u0093\u0096\u009d\u00a9\u00b1")
         buf.write(u"\u00b4\u00b9\u00c3\u00c7\u00cb\u00cf\u00e4\u00e8\u00f1")
         buf.write(u"\u00f6\u00fe\u010c\u0113\u0118\u0122\u0129\u0130\u013a")
         buf.write(u"\u013f\u0144\u0150\u0156\u0159\u015d\u0167\u0169\u0173")
@@ -3738,6 +3738,9 @@ class PDDLParser ( Parser ):
         def NAME(self):
             return self.getToken(PDDLParser.NAME, 0)
 
+        def EQUALS(self):
+            return self.getToken(PDDLParser.EQUALS, 0)
+
         def getRuleIndex(self):
             return PDDLParser.RULE_nameDef
 
@@ -3762,10 +3765,16 @@ class PDDLParser ( Parser ):
 
         localctx = PDDLParser.NameDefContext(self, self._ctx, self.state)
         self.enterRule(localctx, 70, self.RULE_nameDef)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 523
-            self.match(PDDLParser.NAME)
+            _la = self._input.LA(1)
+            if not(_la==PDDLParser.EQUALS or _la==PDDLParser.NAME):
+                self._errHandler.recoverInline(self)
+            else:
+                self._errHandler.reportMatch(self)
+                self.consume()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)

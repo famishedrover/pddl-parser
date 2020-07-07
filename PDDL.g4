@@ -240,8 +240,7 @@ REQUIRE_KEY:
  */
 nameDef
 	: NAME
-//	| 'at'
-//	| 'over'
+  | EQUALS
 	;
 
 NAME: LETTER ANY_CHAR* ;
