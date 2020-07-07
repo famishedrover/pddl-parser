@@ -84,8 +84,14 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return [self.visit(p) for p in ctx.predicateDef()]
 
     def visitPredicateDef(self, ctx):
-        return Predicate(str(ctx.predicate.NAME()),
+        return Predicate(self.visit(ctx.predicate),
                          self.visit(ctx.typedVarList()))
+
+    def visitNameDef(self, ctx):
+        if ctx.NAME():
+            return str(ctx)
+        if ctx.EQUALS():
+            return '='
 
     def visitStructureDef(self, ctx):
         if ctx.actionDef():
