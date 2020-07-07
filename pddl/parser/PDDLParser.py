@@ -43,8 +43,8 @@ def serializedATN():
         buf.write(u"\26\u013b\n\26\3\26\3\26\3\26\5\26\u0140\n\26\3\26\3")
         buf.write(u"\26\3\26\5\26\u0145\n\26\3\26\3\26\3\27\3\27\3\27\3\27")
         buf.write(u"\3\27\3\27\3\27\3\27\5\27\u0151\n\27\3\27\3\27\3\27\3")
-        buf.write(u"\27\5\27\u0157\n\27\3\27\5\27\u015a\n\27\3\27\3\27\3")
-        buf.write(u"\30\3\30\3\30\3\30\3\30\3\30\5\30\u0164\n\30\3\30\3\30")
+        buf.write(u"\27\5\27\u0157\n\27\3\27\5\27\u015a\n\27\3\27\3\27\5")
+        buf.write(u"\27\u015e\n\27\3\27\3\27\3\30\3\30\3\30\3\30\3\30\3\30")
         buf.write(u"\5\30\u0168\n\30\5\30\u016a\n\30\3\31\3\31\3\31\3\31")
         buf.write(u"\3\31\3\31\7\31\u0172\n\31\f\31\16\31\u0175\13\31\3\31")
         buf.write(u"\5\31\u0178\n\31\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u0180")
@@ -180,14 +180,14 @@ def serializedATN():
         buf.write(u"\u0156\5&\24\2\u0154\u0155\7\24\2\2\u0155\u0157\5\32")
         buf.write(u"\16\2\u0156\u0154\3\2\2\2\u0156\u0157\3\2\2\2\u0157\u0159")
         buf.write(u"\3\2\2\2\u0158\u015a\5.\30\2\u0159\u0158\3\2\2\2\u0159")
-        buf.write(u"\u015a\3\2\2\2\u015a\u015b\3\2\2\2\u015b\u015c\7\4\2")
-        buf.write(u"\2\u015c-\3\2\2\2\u015d\u015e\7\31\2\2\u015e\u016a\5")
-        buf.write(u"\60\31\2\u015f\u0160\7\32\2\2\u0160\u0163\5\60\31\2\u0161")
-        buf.write(u"\u0162\7\33\2\2\u0162\u0164\5\64\33\2\u0163\u0161\3\2")
-        buf.write(u"\2\2\u0163\u0164\3\2\2\2\u0164\u0167\3\2\2\2\u0165\u0166")
-        buf.write(u"\7\34\2\2\u0166\u0168\58\35\2\u0167\u0165\3\2\2\2\u0167")
-        buf.write(u"\u0168\3\2\2\2\u0168\u016a\3\2\2\2\u0169\u015d\3\2\2")
-        buf.write(u"\2\u0169\u015f\3\2\2\2\u016a/\3\2\2\2\u016b\u016c\7\3")
+        buf.write(u"\u015a\3\2\2\2\u015a\u015d\3\2\2\2\u015b\u015c\7\34\2")
+        buf.write(u"\2\u015c\u015e\58\35\2\u015d\u015b\3\2\2\2\u015d\u015e")
+        buf.write(u"\3\2\2\2\u015e\u015f\3\2\2\2\u015f\u0160\7\4\2\2\u0160")
+        buf.write(u"-\3\2\2\2\u0161\u0162\7\31\2\2\u0162\u016a\5\60\31\2")
+        buf.write(u"\u0163\u0164\7\32\2\2\u0164\u0167\5\60\31\2\u0165\u0166")
+        buf.write(u"\7\33\2\2\u0166\u0168\5\64\33\2\u0167\u0165\3\2\2\2\u0167")
+        buf.write(u"\u0168\3\2\2\2\u0168\u016a\3\2\2\2\u0169\u0161\3\2\2")
+        buf.write(u"\2\u0169\u0163\3\2\2\2\u016a/\3\2\2\2\u016b\u016c\7\3")
         buf.write(u"\2\2\u016c\u0178\7\4\2\2\u016d\u0178\5\62\32\2\u016e")
         buf.write(u"\u016f\7\3\2\2\u016f\u0173\7 \2\2\u0170\u0172\5\62\32")
         buf.write(u"\2\u0171\u0170\3\2\2\2\u0172\u0175\3\2\2\2\u0173\u0171")
@@ -260,7 +260,7 @@ def serializedATN():
         buf.write(u"\2\2=LXZ`jv~\u0081\u008b\u0093\u0096\u009d\u00a9\u00b1")
         buf.write(u"\u00b4\u00b9\u00c3\u00c7\u00cb\u00cf\u00e4\u00e8\u00f1")
         buf.write(u"\u00f6\u00fe\u010c\u0113\u0118\u0122\u0129\u0130\u013a")
-        buf.write(u"\u013f\u0144\u0150\u0156\u0159\u0163\u0167\u0169\u0173")
+        buf.write(u"\u013f\u0144\u0150\u0156\u0159\u015d\u0167\u0169\u0173")
         buf.write(u"\u0177\u017f\u0189\u018d\u019b\u019f\u01ad\u01ba\u01bd")
         buf.write(u"\u01c0\u01c4\u01d2\u01da\u01de\u01ec\u01f5\u01fa\u0208")
         return buf.getvalue()
@@ -2348,6 +2348,7 @@ class PDDLParser ( Parser ):
             self.task = None # AtomicFormulaContext
             self.precondition = None # GoalDefContext
             self.tn = None # TaskNetworkDefContext
+            self.constraints = None # ConstraintDefsContext
 
         def LP(self, i=None):
             if i is None:
@@ -2380,6 +2381,9 @@ class PDDLParser ( Parser ):
         def PRECONDITION(self):
             return self.getToken(PDDLParser.PRECONDITION, 0)
 
+        def CONSTRAINTS(self):
+            return self.getToken(PDDLParser.CONSTRAINTS, 0)
+
         def typedVarList(self):
             return self.getTypedRuleContext(PDDLParser.TypedVarListContext,0)
 
@@ -2390,6 +2394,10 @@ class PDDLParser ( Parser ):
 
         def taskNetworkDef(self):
             return self.getTypedRuleContext(PDDLParser.TaskNetworkDefContext,0)
+
+
+        def constraintDefs(self):
+            return self.getTypedRuleContext(PDDLParser.ConstraintDefsContext,0)
 
 
         def getRuleIndex(self):
@@ -2461,7 +2469,17 @@ class PDDLParser ( Parser ):
                 localctx.tn = self.taskNetworkDef()
 
 
-            self.state = 345
+            self.state = 347
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==PDDLParser.CONSTRAINTS:
+                self.state = 345
+                self.match(PDDLParser.CONSTRAINTS)
+                self.state = 346
+                localctx.constraints = self.constraintDefs()
+
+
+            self.state = 349
             self.match(PDDLParser.RP)
         except RecognitionException as re:
             localctx.exception = re
@@ -2496,13 +2514,6 @@ class PDDLParser ( Parser ):
             return self.getTypedRuleContext(PDDLParser.OrderingDefsContext,0)
 
 
-        def CONSTRAINTS(self):
-            return self.getToken(PDDLParser.CONSTRAINTS, 0)
-
-        def constraintDefs(self):
-            return self.getTypedRuleContext(PDDLParser.ConstraintDefsContext,0)
-
-
         def getRuleIndex(self):
             return PDDLParser.RULE_taskNetworkDef
 
@@ -2534,35 +2545,25 @@ class PDDLParser ( Parser ):
             token = self._input.LA(1)
             if token in [PDDLParser.ORDERED]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 347
+                self.state = 351
                 self.match(PDDLParser.ORDERED)
-                self.state = 348
+                self.state = 352
                 localctx.subtasks = self.subtasksDef()
                 pass
             elif token in [PDDLParser.SUBTASKS]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 349
-                self.match(PDDLParser.SUBTASKS)
-                self.state = 350
-                localctx.subtasks = self.subtasksDef()
                 self.state = 353
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if _la==PDDLParser.ORDERING:
-                    self.state = 351
-                    self.match(PDDLParser.ORDERING)
-                    self.state = 352
-                    self.orderingDefs()
-
-
+                self.match(PDDLParser.SUBTASKS)
+                self.state = 354
+                localctx.subtasks = self.subtasksDef()
                 self.state = 357
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==PDDLParser.CONSTRAINTS:
+                if _la==PDDLParser.ORDERING:
                     self.state = 355
-                    self.match(PDDLParser.CONSTRAINTS)
+                    self.match(PDDLParser.ORDERING)
                     self.state = 356
-                    self.constraintDefs()
+                    self.orderingDefs()
 
 
                 pass

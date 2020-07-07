@@ -116,8 +116,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
                       self.visit(ctx.task),
                       parameters=(self.visit(ctx.parameters)
                                   if ctx.parameters else ()),
-                      precondition=(self.visit(ctx.precondition)
-                                    if ctx.precondition else ()),
+                      precondition=AndFormula([self.visit(ctx.precondition) if ctx.precondition else (),
+                                               self.visit(ctx.constraints) if ctx.constraints else ()]),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))
 
     def visitTaskNetworkDef(self, ctx):
@@ -148,6 +148,19 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return ((f'task{self.index_task()}'
                  if ctx.taskId is None else ctx.taskId.text),
                 self.visit(ctx.atomicFormula()))
+
+    def visitConstraintDefs(self, ctx):
+        if ctx.AND():
+            return AndFormula([self.visit(constraint)
+                               for constraint in ctx.constraintDef()])
+        return self.visit(ctx.constraintDef(0))
+
+    def visitConstraintDef(self, ctx):
+        if ctx.NOT():
+            return NotFormula(self.visit(ctx.constraintDef()))
+        if ctx.EQUALS():
+            return AtomicFormula('=', [ctx.left.text, ctx.right.text])
+        return ()
 
     def visitGoalDef(self, ctx):
         if ctx.literal():
