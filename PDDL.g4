@@ -133,14 +133,13 @@ orderingDefs
 orderingDef: LP BEFORE head=NAME tail+=NAME RP;
 
 constraintDefs
-  : LP RP
-  | constraintDef
+  : constraintDef
   | LP AND constraintDef+ RP;
 
 constraintDef
   : LP RP
-  | LP NOT LP EQUALS left=NAME right=NAME RP RP
-  | LP EQUALS left=NAME right=NAME RP;
+  | LP NOT constraintDef RP
+  | LP EQUALS left=VARIABLE right=VARIABLE RP;
 
 //--------- PROBLEM ----------------
 
