@@ -223,7 +223,7 @@ REQUIRE_KEY:
  | ':disjunctive-preconditions' //	Allow or in goal descriptions
  | ':equality' //	Support = as built-in predicate
  | ':existential-preconditions' //	Allow exists in goal descriptions
- | ':universal-preconditions' //	Allow forall in goal descriptions
+ | ':universal-preconditions' | ':universal-precondition' //	Allow forall in goal descriptions
  | ':quantified-preconditions' //	= :existential-preconditions + :universal-preconditions
  | ':conditional-effects' // Allow when in action effects
  | ':fluents' //	Allow function definitions and use of effects using assignment operators and arithmetic preconditions.
