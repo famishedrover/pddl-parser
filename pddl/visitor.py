@@ -89,7 +89,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitNameDef(self, ctx):
         if ctx.NAME():
-            return str(ctx)
+            return ctx.name.text
         if ctx.EQUALS():
             return '='
 

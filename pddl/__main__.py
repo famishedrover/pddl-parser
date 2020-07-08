@@ -19,12 +19,18 @@ def main():
         """parse_domain command function."""
         model = parse_domain(args.file, file_stream=True)
         LOGGER.info("PDDL domain: %s", model.name)
-        LOGGER.info("PDDL requirements: %s", ", ".join(model.requirements))
-        LOGGER.info("PDDL types: %s", ", ".join(map(str,model.types)))
+        LOGGER.info("PDDL requirements: %d", len(model.requirements))
+        LOGGER.debug("PDDL requirements: %s", ", ".join(model.requirements))
+        LOGGER.info("PDDL types: %d", len(model.types))
+        LOGGER.debug("PDDL types: %s", ", ".join(map(str,model.types)))
         LOGGER.info("PDDL predicates: %d", len(model.predicates))
+        LOGGER.debug("PDDL predicates: %s", ", ".join(map(str, model.predicates)))
         LOGGER.info("PDDL actions: %d", len(model.actions))
+        LOGGER.debug("PDDL actions: %s", ", ".join(a.name for a in model.actions))
         LOGGER.info("PDDL tasks: %d", len(model.tasks))
+        LOGGER.debug("PDDL tasks: %s", ", ".join(t.name for t in model.tasks))
         LOGGER.info("PDDL methods: %d", len(model.methods))
+        LOGGER.debug("PDDL methods: %s", ", ".join(m.name for m in model.methods))
         if args.pprint:
             print(write_domain(model))
 

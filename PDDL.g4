@@ -239,7 +239,7 @@ REQUIRE_KEY:
  * may need more to specify
  */
 nameDef
-	: NAME
+	: name=NAME
   | EQUALS
 	;
 
