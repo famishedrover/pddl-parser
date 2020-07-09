@@ -49,6 +49,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.types)
 
     def visitTypedList(self, ctx):
+        typed_list = []
         if ctx.supertype:
             typed_list = [Type(t.text, ctx.supertype.text) for t in ctx.types]
         else:
@@ -58,6 +59,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return typed_list
 
     def visitTypedObjList(self, ctx):
+        typed_list = []
         if ctx.objtype:
             typed_list = [Constant(t.text, ctx.objtype.text)
                           for t in ctx.names]
@@ -68,6 +70,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return typed_list
 
     def visitTypedVarList(self, ctx):
+        typed_list = []
         if ctx.vartype:
             typed_list = [Variable(t.text, ctx.vartype.text)
                           for t in ctx.names]
@@ -115,7 +118,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitTaskDef(self, ctx):
         return Task(ctx.name.text,
                     parameters=(self.visit(ctx.parameters)
-                                if ctx.parameters else None))
+                                if ctx.parameters else ()))
 
     def visitMethodDef(self, ctx):
         return Method(ctx.name.text,
@@ -250,5 +253,5 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitHtnDef(self, ctx):
         return Method('__top_method', AtomicFormula('__top'),
                       parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else None),
+                                  if ctx.parameters else ()),
                       tn=(self.visit(ctx.tn) if ctx.tn else None))
