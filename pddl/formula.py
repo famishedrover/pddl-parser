@@ -1,9 +1,9 @@
 """PDDL basic classes representing literals, terms, goals, ..."""
 
 from typing import List, Union
+from .variable import Variable
 GOAL = Union['AtomicFormula', 'NotFormula', 'AndFormula']
 
-from .variable import Variable
 
 class AtomicFormula:
 
@@ -81,6 +81,8 @@ class ForallFormula:
 
     """(forall (<variables>*) <gd>).
 
+    :param variables: forall variables
+    :param goal: forall goal
     """
     def __init__(self, variables: List[Variable], goal: GOAL):
         self.__variables = variables
@@ -88,10 +90,12 @@ class ForallFormula:
 
     @property
     def variables(self):
+        """Get variables."""
         return self.__variables
 
     @property
     def goal(self):
+        """Get goal."""
         return self.__goal
 
     def __str__(self):

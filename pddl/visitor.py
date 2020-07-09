@@ -7,7 +7,8 @@ from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
 
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
 from .problem import Problem
-from .formula import AtomicFormula, NotFormula, AndFormula, ForallFormula, WhenEffect
+from .formula import AtomicFormula, NotFormula, AndFormula
+from .formula import ForallFormula, WhenEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
 
@@ -38,9 +39,11 @@ class PDDLVisitor(AbstractPDDLVisitor):
                                  if ctx.constants else frozenset()),
                       predicates=(self.visit(ctx.predicates)
                                   if ctx.predicates else frozenset()),
-                      actions={a.name: a for a in ops if isinstance(a, Action)},
+                      actions={a.name: a for a in ops
+                               if isinstance(a, Action)},
                       tasks={a.name: a for a in ops if isinstance(a, Task)},
-                      methods={a.name: a for a in ops if isinstance(a, Method)})
+                      methods={a.name: a for a in ops
+                               if isinstance(a, Method)})
 
     def visitRequireDef(self, ctx):
         return frozenset(k.text for k in ctx.keys)
@@ -90,11 +93,12 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return Predicate(self.visit(ctx.predicate),
                          self.visit(ctx.typedVarList()))
 
-    def visitNameDef(self, ctx):
+    def visitNameDef(self, ctx) -> str:
         if ctx.NAME():
             return ctx.name.text
         if ctx.EQUALS():
             return '='
+        return ''
 
     def visitStructureDef(self, ctx):
         if ctx.actionDef():

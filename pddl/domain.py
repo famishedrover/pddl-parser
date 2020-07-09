@@ -1,7 +1,7 @@
 """Classes related to the Domain description."""
 
-from typing import List, Union, Optional, Dict, Iterator
-from .formula import AtomicFormula, NotFormula, AndFormula, WhenEffect
+from typing import List, Optional, Dict, Iterator
+from .formula import AtomicFormula, AndFormula, WhenEffect
 from .variable import Type, Constant, Variable, Predicate
 from .hierarchy import Task, Method
 
@@ -135,6 +135,6 @@ class Domain:
         """Get methods."""
         return self.__methods.values()
 
-    def get_method(self, method:str) -> Method:
+    def get_method(self, method: str) -> Method:
         """Get method by name."""
         return self.__methods[method]

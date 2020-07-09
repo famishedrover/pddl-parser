@@ -26,12 +26,18 @@ class Task:
         return self.__name
 
     @property
-    def methods(self):
+    def methods(self) -> List['Method']:
+        """Get task methods."""
         return self.__methods
 
     def add_method(self, method: 'Method'):
+        """Add a method to the task.
+
+        :param method: a method
+        """
         if method.task.name != self.name:
-            raise AttributeError(f"Method {method.name} does not refine task {self.name}")
+            msg = "Method {} does not refine task {}"
+            raise AttributeError(msg.format(method.name, self.name))
         self.__methods.append(method)
 
     @property

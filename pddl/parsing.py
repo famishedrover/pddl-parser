@@ -8,6 +8,7 @@ from .domain import Domain
 from .problem import Problem
 from .logger import LOGGER
 
+
 def parse_pddl_file(file: str):
     """Parse a PDDL file and returns the parsed tree."""
     input_stream = antlr4.FileStream(file)
