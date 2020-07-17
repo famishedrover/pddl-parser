@@ -232,7 +232,7 @@ REQUIRE_KEY:
  | ':durative-actions' //	Allows durative actions. Note that this does not imply :fluents.
  | ':duration-inequalities' //	Allows duration constraints in durative actions using inequalities.
  | ':continuous-effects' //	Allows durative actions to affect fluents	continuously over the duration of the actions.
- | ':hierachie' | ':hierarchy' | ':method-precondition' // HDDL
+ | ':hierachie' | ':hierarchy' | ':method-precondition' | ':method-preconditions' // HDDL
 ;
 
 /*
