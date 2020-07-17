@@ -108,13 +108,14 @@ methodDef: LP METHOD name=NAME
   TASK task=atomicFormula
   (PRECONDITION precondition=goalDef)?
   (tn=taskNetworkDef)?
-  (CONSTRAINTS constraints=constraintDefs)?
   RP;
 
 taskNetworkDef
   : ORDERED subtasks=subtasksDef
+  	(CONSTRAINTS constraints = constraintDefs)?
   | SUBTASKS subtasks=subtasksDef
-    (ORDERING orderingDefs)?;
+	  (ORDERING orderingDefs)?
+  	(CONSTRAINTS constraints = constraintDefs)?;
 
 subtasksDef
   : LP RP

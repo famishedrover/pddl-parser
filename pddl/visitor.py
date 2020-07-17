@@ -125,13 +125,17 @@ class PDDLVisitor(AbstractPDDLVisitor):
                                 if ctx.parameters else ()))
 
     def visitMethodDef(self, ctx):
+        if ctx.tn is None:
+            tn = None
+            constraints = ()
+        else:
+            tn, constraints = self.visit(ctx.tn)
         return Method(ctx.name.text,
                       self.visit(ctx.task),
                       parameters=(self.visit(ctx.parameters)
                                   if ctx.parameters else ()),
-                      precondition=AndFormula([self.visit(ctx.precondition) if ctx.precondition else (),
-                                               self.visit(ctx.constraints) if ctx.constraints else ()]),
-                      tn=(self.visit(ctx.tn) if ctx.tn else None))
+                      precondition=AndFormula([self.visit(ctx.precondition) if ctx.precondition else (), constraints]),
+                      tn=tn)
 
     def visitTaskNetworkDef(self, ctx):
         subtasks = self.visit(ctx.subtasks)
@@ -146,7 +150,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
             for head, tail in order:
                 for task in tail:
                     ordering[head].append(task)
-        return TaskNetwork(subtasks, ordering)
+        return TaskNetwork(subtasks, ordering), (self.visit(ctx.constraints) if ctx.constraints else ())
 
     def visitOrderingDefs(self, ctx):
         return [self.visit(o) for o in ctx.order]
@@ -255,7 +259,13 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.goalDef())
 
     def visitHtnDef(self, ctx):
+        if ctx.tn is None:
+            tn = None
+            constraints = ()
+        else:
+            tn, constraints = self.visit(ctx.tn)
         return Method('__top_method', AtomicFormula('__top'),
                       parameters=(self.visit(ctx.parameters)
                                   if ctx.parameters else ()),
-                      tn=(self.visit(ctx.tn) if ctx.tn else None))
+                      precondition=constraints,
+                      tn=tn)
