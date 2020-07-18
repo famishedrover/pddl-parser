@@ -121,6 +121,10 @@ class Domain:
         """Get action by name."""
         return self.__actions[action]
 
+    def has_action(self, action: str) -> bool:
+        """Return true if action exists."""
+        return action in self.__actions
+
     @property
     def tasks(self) -> Iterator[Task]:
         """Get tasks."""
@@ -130,6 +134,10 @@ class Domain:
         """Get task by name."""
         return self.__tasks[task]
 
+    def has_task(self, task: str) -> bool:
+        """Return true if task exists."""
+        return task in self.__tasks
+
     @property
     def methods(self) -> Iterator[Method]:
         """Get methods."""
@@ -138,3 +146,7 @@ class Domain:
     def get_method(self, method: str) -> Method:
         """Get method by name."""
         return self.__methods[method]
+
+    def has_method(self, method: str) -> bool:
+        """Return true if method exists."""
+        return method in self.__methods
