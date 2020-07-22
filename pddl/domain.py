@@ -80,7 +80,7 @@ class Domain:
         self.__requirements = requirements
         self.__types = types
         self.__constants = constants
-        self.__predicates = predicates
+        self.__predicates = {p.name: p for p in predicates}
         self.__actions = actions
         self.__tasks = tasks
         self.__methods = methods
@@ -110,7 +110,11 @@ class Domain:
     @property
     def predicates(self) -> List[Predicate]:
         """Get predicates."""
-        return self.__predicates
+        return self.__predicates.values()
+
+    def get_predicate(self, predicate: str) -> Predicate:
+        """Get predicate by name."""
+        return self.__predicates[predicate]
 
     @property
     def actions(self) -> Iterator[Action]:
