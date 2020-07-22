@@ -87,7 +87,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.typedObjList())
 
     def visitPredicatesDef(self, ctx):
-        return [self.visit(p) for p in ctx.predicateDef()]
+        return [self.visit(p) for p in ctx.predicateDef()]# + [Predicate('__sortof', [Variable('?o', 'object'), Variable('?t', 'type')])]
 
     def visitPredicateDef(self, ctx):
         return Predicate(self.visit(ctx.predicate),
@@ -110,11 +110,12 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return None
 
     def visitActionDef(self, ctx):
+        parameters = self.visit(ctx.parameters) if ctx.parameters else ()
+        preconditions = self.visit(ctx.precondition) if ctx.precondition else ()
+        sortof = AndFormula([AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
         return Action(ctx.name.text,
-                      parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else ()),
-                      precondition=(self.visit(ctx.precondition)
-                                    if ctx.precondition else ()),
+                      parameters=parameters,
+                      precondition=AndFormula([preconditions, sortof]),
                       effect=(self.visit(ctx.effect) if ctx.effect else ()),
                       observe=(self.visit(ctx.observe)
                                if ctx.observe else None))
