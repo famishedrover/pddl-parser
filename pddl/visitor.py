@@ -126,6 +126,11 @@ class PDDLVisitor(AbstractPDDLVisitor):
                                 if ctx.parameters else ()))
 
     def visitMethodDef(self, ctx):
+        parameters = self.visit(ctx.parameters) if ctx.parameters else ()
+        preconditions = self.visit(
+            ctx.precondition) if ctx.precondition else ()
+        sortof = AndFormula(
+            [AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
         if ctx.tn is None:
             tn = None
             constraints = ()
@@ -133,9 +138,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
             tn, constraints = self.visit(ctx.tn)
         return Method(ctx.name.text,
                       self.visit(ctx.task),
-                      parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else ()),
-                      precondition=AndFormula([self.visit(ctx.precondition) if ctx.precondition else (), constraints]),
+                      parameters=parameters,
+                      precondition=AndFormula([preconditions, constraints, sortof]),
                       tn=tn)
 
     def visitTaskNetworkDef(self, ctx):
