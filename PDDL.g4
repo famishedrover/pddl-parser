@@ -240,8 +240,8 @@ REQUIRE_KEY:
  * may need more to specify
  */
 nameDef
-	: name=NAME
-  | EQUALS
+	: EQUALS
+  | name=NAME
 	;
 
 NAME: LETTER ANY_CHAR* ;

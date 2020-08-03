@@ -2766,8 +2766,8 @@ public class PDDLParser extends Parser {
 
 	public static class NameDefContext extends ParserRuleContext {
 		public Token name;
-		public TerminalNode NAME() { return getToken(PDDLParser.NAME, 0); }
 		public TerminalNode EQUALS() { return getToken(PDDLParser.EQUALS, 0); }
+		public TerminalNode NAME() { return getToken(PDDLParser.NAME, 0); }
 		public NameDefContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2781,18 +2781,18 @@ public class PDDLParser extends Parser {
 			setState(529);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case NAME:
+			case EQUALS:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(527);
-				((NameDefContext)_localctx).name = match(NAME);
+				match(EQUALS);
 				}
 				break;
-			case EQUALS:
+			case NAME:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(528);
-				match(EQUALS);
+				((NameDefContext)_localctx).name = match(NAME);
 				}
 				break;
 			default:
@@ -3000,9 +3000,9 @@ public class PDDLParser extends Parser {
 		"\u0206\7\3\2\2\u0206\u020c\7\35\2\2\u0207\u0208\7\23\2\2\u0208\u0209\7"+
 		"\3\2\2\u0209\u020a\5\24\13\2\u020a\u020b\7\4\2\2\u020b\u020d\3\2\2\2\u020c"+
 		"\u0207\3\2\2\2\u020c\u020d\3\2\2\2\u020d\u020e\3\2\2\2\u020e\u020f\5."+
-		"\30\2\u020f\u0210\7\4\2\2\u0210G\3\2\2\2\u0211\u0214\7(\2\2\u0212\u0214"+
-		"\7\6\2\2\u0213\u0211\3\2\2\2\u0213\u0212\3\2\2\2\u0214I\3\2\2\2?LXZ`j"+
-		"v~\u0081\u008b\u0093\u0096\u009d\u00a9\u00b1\u00b4\u00b9\u00c3\u00c7\u00cb"+
+		"\30\2\u020f\u0210\7\4\2\2\u0210G\3\2\2\2\u0211\u0214\7\6\2\2\u0212\u0214"+
+		"\7(\2\2\u0213\u0211\3\2\2\2\u0213\u0212\3\2\2\2\u0214I\3\2\2\2?LXZ`jv"+
+		"~\u0081\u008b\u0093\u0096\u009d\u00a9\u00b1\u00b4\u00b9\u00c3\u00c7\u00cb"+
 		"\u00cf\u00e4\u00e8\u00f1\u00f6\u00fe\u010c\u0113\u0118\u0122\u0129\u0130"+
 		"\u013a\u013f\u0144\u0150\u0156\u0159\u0161\u0167\u016b\u016d\u0177\u017b"+
 		"\u0183\u018d\u0191\u019f\u01a3\u01b1\u01be\u01c1\u01c4\u01c8\u01d6\u01de"+

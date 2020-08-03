@@ -258,8 +258,8 @@ def serializedATN():
         buf.write(u"\2\2\u0209\u020a\5\24\13\2\u020a\u020b\7\4\2\2\u020b")
         buf.write(u"\u020d\3\2\2\2\u020c\u0207\3\2\2\2\u020c\u020d\3\2\2")
         buf.write(u"\2\u020d\u020e\3\2\2\2\u020e\u020f\5.\30\2\u020f\u0210")
-        buf.write(u"\7\4\2\2\u0210G\3\2\2\2\u0211\u0214\7(\2\2\u0212\u0214")
-        buf.write(u"\7\6\2\2\u0213\u0211\3\2\2\2\u0213\u0212\3\2\2\2\u0214")
+        buf.write(u"\7\4\2\2\u0210G\3\2\2\2\u0211\u0214\7\6\2\2\u0212\u0214")
+        buf.write(u"\7(\2\2\u0213\u0211\3\2\2\2\u0213\u0212\3\2\2\2\u0214")
         buf.write(u"I\3\2\2\2?LXZ`jv~\u0081\u008b\u0093\u0096\u009d\u00a9")
         buf.write(u"\u00b1\u00b4\u00b9\u00c3\u00c7\u00cb\u00cf\u00e4\u00e8")
         buf.write(u"\u00f1\u00f6\u00fe\u010c\u0113\u0118\u0122\u0129\u0130")
@@ -3750,11 +3750,11 @@ class PDDLParser ( Parser ):
             self.parser = parser
             self.name = None # Token
 
-        def NAME(self):
-            return self.getToken(PDDLParser.NAME, 0)
-
         def EQUALS(self):
             return self.getToken(PDDLParser.EQUALS, 0)
+
+        def NAME(self):
+            return self.getToken(PDDLParser.NAME, 0)
 
         def getRuleIndex(self):
             return PDDLParser.RULE_nameDef
@@ -3784,15 +3784,15 @@ class PDDLParser ( Parser ):
             self.state = 529
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [PDDLParser.NAME]:
+            if token in [PDDLParser.EQUALS]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 527
-                localctx.name = self.match(PDDLParser.NAME)
+                self.match(PDDLParser.EQUALS)
                 pass
-            elif token in [PDDLParser.EQUALS]:
+            elif token in [PDDLParser.NAME]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 528
-                self.match(PDDLParser.EQUALS)
+                localctx.name = self.match(PDDLParser.NAME)
                 pass
             else:
                 raise NoViableAltException(self)

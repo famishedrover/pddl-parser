@@ -11,6 +11,7 @@ from .formula import AtomicFormula, NotFormula, AndFormula
 from .formula import ForallFormula, WhenEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
+from .logger import LOGGER
 
 
 class PDDLVisitor(AbstractPDDLVisitor):
@@ -95,6 +96,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitNameDef(self, ctx) -> str:
         if ctx.NAME():
+            if ctx.name.text is None:
+                LOGGER.error("None name in %s", ctx)
             return ctx.name.text
         if ctx.EQUALS():
             return '='
@@ -128,12 +131,12 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitMethodDef(self, ctx):
         parameters = self.visit(ctx.parameters) if ctx.parameters else ()
         preconditions = self.visit(
-            ctx.precondition) if ctx.precondition else ()
+            ctx.precondition) if ctx.precondition else AndFormula([])
         sortof = AndFormula(
             [AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
         if ctx.tn is None:
             tn = None
-            constraints = ()
+            constraints = AndFormula([])
         else:
             tn, constraints = self.visit(ctx.tn)
         return Method(ctx.name.text,
@@ -155,7 +158,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
             for head, tail in order:
                 for task in tail:
                     ordering[head].append(task)
-        return TaskNetwork(subtasks, ordering), (self.visit(ctx.constraints) if ctx.constraints else ())
+        return TaskNetwork(subtasks, ordering), (self.visit(ctx.constraints) if ctx.constraints else AndFormula([]))
 
     def visitOrderingDefs(self, ctx):
         return [self.visit(o) for o in ctx.order]
@@ -201,7 +204,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.atomicFormula())
 
     def visitAtomicFormula(self, ctx):
-        return AtomicFormula(str(ctx.predicate.NAME()),
+        return AtomicFormula(self.visit(ctx.predicate),
                              [self.visit(t) for t in ctx.arguments])
 
     def visitTerm(self, ctx):
