@@ -88,7 +88,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.typedObjList())
 
     def visitPredicatesDef(self, ctx):
-        return [self.visit(p) for p in ctx.predicateDef()]# + [Predicate('__sortof', [Variable('?o', 'object'), Variable('?t', 'type')])]
+        return [self.visit(p) for p in ctx.predicateDef()]
 
     def visitPredicateDef(self, ctx):
         return Predicate(self.visit(ctx.predicate),
@@ -114,11 +114,12 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitActionDef(self, ctx):
         parameters = self.visit(ctx.parameters) if ctx.parameters else ()
-        preconditions = self.visit(ctx.precondition) if ctx.precondition else ()
-        sortof = AndFormula([AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
+        preconditions = self.visit(
+            ctx.precondition) if ctx.precondition else AndFormula([])
+        #sortof = AndFormula([AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
         return Action(ctx.name.text,
                       parameters=parameters,
-                      precondition=AndFormula([preconditions, sortof]),
+                      precondition=preconditions,#AndFormula([preconditions, sortof]),
                       effect=(self.visit(ctx.effect) if ctx.effect else ()),
                       observe=(self.visit(ctx.observe)
                                if ctx.observe else None))
@@ -132,8 +133,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
         parameters = self.visit(ctx.parameters) if ctx.parameters else ()
         preconditions = self.visit(
             ctx.precondition) if ctx.precondition else AndFormula([])
-        sortof = AndFormula(
-            [AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
+        #sortof = AndFormula(
+        #    [AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
         if ctx.tn is None:
             tn = None
             constraints = AndFormula([])
@@ -142,7 +143,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return Method(ctx.name.text,
                       self.visit(ctx.task),
                       parameters=parameters,
-                      precondition=AndFormula([preconditions, constraints, sortof]),
+                      precondition=AndFormula([preconditions, constraints]),#, sortof]),
                       tn=tn)
 
     def visitTaskNetworkDef(self, ctx):

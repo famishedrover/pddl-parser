@@ -65,3 +65,6 @@ class Predicate:
 
     def __str__(self):
         return f"{self.__name} {' '.join(map(str, self.__variables))}"
+
+    def __lt__(self, other: 'Predicate'):
+        return self.__name < other.__name
