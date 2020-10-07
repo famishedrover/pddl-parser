@@ -16,20 +16,20 @@ Useful only if the grammar (PDDL.g4) has been changed:
 ### Dependencies
 
 ```
-python -m pip install antlr4-python3-runtime jinja2 --user
+python3 -m pip install antlr4-python3-runtime jinja2 --user
 ```
 
 ### Install
 
 ```
-python setup.py install --user
+python3 setup.py install --user
 ```
 
 ## Usage
 
 ### Python API
 
-From either a python script or `ipython`:
+From either a python script or `ipython3`:
 
 ```python
 import pddl
