@@ -1,0 +1,80 @@
+(define (domain minehunting)
+  (:requirements :typing)
+  (:types
+    location task robot - object
+    area-to-cover - task
+    primitive-area - area-to-cover
+  )
+
+  (:predicates 
+    (at ?r - robot ?l - location)
+    (task-location ?t - task ?l - location)
+    (covered ?pa - primitive-area)
+  )
+
+  (:task go-to :parameters (?r - robot ?l - location))
+  (:task cover :parameters (?a - area-to-cover))
+
+  (:method m-go-to
+    :parameters (?r - robot ?l1 ?l2 - location)
+    :task (go-to ?r ?l2)
+    :subtasks (and
+      (fl-go-to ?r ?l1 ?l2)
+      )
+  )
+
+  (:method m-cover-primitive-area-g
+    :parameters (?pa - primitive-area ?l - location ?r - robot)
+    :task (cover ?pa)
+    :ordered-subtasks (and
+      (go-to ?r ?l)
+      (fl-cover ?r ?pa ?l)
+      )
+  )
+
+  (:method m-cover-primitive-area
+    :parameters (?pa - primitive-area ?l - location ?r - robot)
+    :task (cover ?pa)
+    :subtasks (fl-cover ?r ?pa ?l)
+  )
+
+
+  (:method m-i-am-there
+    :parameters (?r - robot ?l - location)
+    :task (go-to  ?r ?l)
+    :subtasks (and
+      (noop ?r ?l)
+      )
+  )
+
+  (:action noop
+    :parameters (?r - robot ?l - location)
+    :precondition (at ?r ?l)
+    :effect ()
+  )
+
+  (:action fl-go-to
+    :parameters (?r - robot ?l1 ?l2 - location)
+    :precondition (and
+      (at ?r ?l1)
+      (not (= ?l1 ?l2))
+      )
+    :effect (and
+      (not (at ?r ?l1))
+      (at ?r ?l2)
+      )
+  )
+
+  (:action fl-cover
+    :parameters (?r - robot ?pa - primitive-area ?l - location)
+    :precondition (and
+      (at ?r ?l)
+      (task-location ?pa ?l)
+      (not (covered ?pa))
+      )
+    :effect (and
+      (covered ?pa)
+      )
+  )
+
+)

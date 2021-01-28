@@ -45,6 +45,12 @@ class Task:
         """Get parameters."""
         return self.__parameters
 
+    def __str__(self) -> str:
+        return f"""
+    (:task {self.name}
+        :parameters ({' '.join(map(str, self.parameters))})
+    )"""
+
 
 class Method:
 
@@ -63,6 +69,7 @@ class Method:
                  parameters: List[Variable] = None,
                  precondition: Union[AtomicFormula,
                                      NotFormula, AndFormula] = None,
+                 effect = None,
                  tn: 'TaskNetwork' = None):
         self.__name = name
         self.__task = task
@@ -95,6 +102,14 @@ class Method:
         """Get task network."""
         return self.__tn
 
+    def __str__(self) -> str:
+        return f"""
+    (:method {self.name}
+        :parameters ({' '.join(map(str, self.parameters))})
+        :task {self.task}
+        :precondition ({self.precondition})
+        {self.network}
+    )"""
 
 class TaskNetwork:
 
@@ -107,9 +122,13 @@ class TaskNetwork:
 
     def __init__(self,
                  subtasks: List[Tuple[str, AtomicFormula]],
-                 ordering: Dict[str, List[str]]):
+                 ordering: Dict[str, List[str]],
+                 constraints = None,
+                 causal_links = None):
         self.__subtasks = subtasks
         self.__ordering = ordering
+        self.constraints = constraints
+        self.causal_links = causal_links
 
     @property
     def subtasks(self) -> List[Tuple[str, AtomicFormula]]:
@@ -120,3 +139,11 @@ class TaskNetwork:
     def ordering(self) -> Dict[str, List[str]]:
         """Get subtasks ordering."""
         return self.__ordering
+
+    def __str__(self) -> str:
+        nl = '\n            '
+        return f""":subtasks (and 
+            {nl.join(f'({id} {formula})' for id, formula in self.subtasks)})
+        :ordering (and
+            {nl.join(f'(< {src} {tgt})' for src, tgts in self.ordering.items() 
+                                        for tgt in tgts)})"""

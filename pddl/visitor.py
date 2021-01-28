@@ -3,12 +3,14 @@
 from collections import defaultdict
 import itertools
 
-from .parser.PDDLVisitor import PDDLVisitor as AbstractPDDLVisitor
+from .parser.antlrHDDLVisitor import antlrHDDLVisitor as AbstractPDDLVisitor
+from .parser.antlrHDDLParser import antlrHDDLParser
 
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
+from .variable import Function
 from .problem import Problem
 from .formula import AtomicFormula, NotFormula, AndFormula
-from .formula import ForallFormula, WhenEffect
+from .formula import ForallFormula, WhenEffect, FluentEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
 from .logger import LOGGER
@@ -29,252 +31,255 @@ class PDDLVisitor(AbstractPDDLVisitor):
         self.task_index += 1
         return i
 
-    def visitDomain(self, ctx):
-        ops = [self.visit(o) for o in ctx.operators]
-        return Domain(ctx.name.text,
-                      requirements=(self.visit(ctx.requirements)
-                                    if ctx.requirements else frozenset()),
-                      types=(self.visit(ctx.types) if ctx.types
-                             else frozenset()),
-                      constants=(self.visit(ctx.constants)
-                                 if ctx.constants else frozenset()),
-                      predicates=(self.visit(ctx.predicates)
-                                  if ctx.predicates else frozenset()),
-                      actions={a.name: a for a in ops
-                               if isinstance(a, Action)},
-                      tasks={a.name: a for a in ops if isinstance(a, Task)},
-                      methods={a.name: a for a in ops
-                               if isinstance(a, Method)})
+    def visitDomain(self, ctx: antlrHDDLParser.DomainContext):
+        name = self.visit(ctx.domain_symbol())
+        requirements = self.visit(ctx.require_def())
+        types = []
+        if ctx.type_def():
+            types = self.visit(ctx.type_def())
+        constants = []
+        if ctx.const_def():
+            constants = self.visit(ctx.const_def())
+        actions = [self.visit(a) for a in ctx.action_def()]
+        tasks = []
+        if ctx.comp_task_def():
+            tasks = [self.visit(a) for a in ctx.comp_task_def()]
+        methods = []
+        if ctx.method_def():
+            methods = [self.visit(a) for a in ctx.method_def()]
+        predicates = []
+        if ctx.predicates_def():
+            predicates = self.visit(ctx.predicates_def())
+        functions = []
+        if ctx.funtions_def():
+            functions = self.visit(ctx.funtions_def())
+        return Domain(name=name,
+                      requirements=requirements,
+                      types=types,
+                      constants=constants,
+                      predicates=predicates,
+                      functions=functions,
+                      actions=actions,
+                      tasks=tasks,
+                      methods=methods)
 
-    def visitRequireDef(self, ctx):
-        return frozenset(k.text for k in ctx.keys)
+    def visitDomain_symbol(self, ctx:antlrHDDLParser.Domain_symbolContext):
+        return ctx.NAME()
 
-    def visitTypesDef(self, ctx):
-        return self.visit(ctx.types)
+    def visitRequire_def(self, ctx:antlrHDDLParser.Require_defContext):
+        return self.visit(ctx.require_defs())
 
-    def visitTypedList(self, ctx):
-        typed_list = []
-        if ctx.supertype:
-            typed_list = [Type(t.text, ctx.supertype.text) for t in ctx.types]
-        else:
-            typed_list = [Type(t.text) for t in ctx.types]
-        if ctx.typedList():
-            typed_list += self.visit(ctx.typedList())
-        return typed_list
+    def visitRequire_defs(self, ctx:antlrHDDLParser.Require_defsContext):
+        return [n.symbol.text for n in ctx.REQUIRE_NAME()]
 
-    def visitTypedObjList(self, ctx):
-        typed_list = []
-        if ctx.objtype:
-            typed_list = [Constant(t.text, ctx.objtype.text)
-                          for t in ctx.names]
-        else:
-            typed_list = [Constant(t.text) for t in ctx.names]
-        if ctx.typedObjList():
-            typed_list += self.visit(ctx.typedObjList())
-        return typed_list
+    def visitType_def(self, ctx:antlrHDDLParser.Type_defContext):
+        return self.visit(ctx.type_def_list())
 
-    def visitTypedVarList(self, ctx):
-        typed_list = []
-        if ctx.vartype:
-            typed_list = [Variable(t.text, ctx.vartype.text)
-                          for t in ctx.names]
-        else:
-            typed_list = [Variable(t.text) for t in ctx.names]
-        if ctx.typedVarList():
-            typed_list += self.visit(ctx.typedVarList())
-        return typed_list
-
-    def visitConstantsDef(self, ctx):
-        return self.visit(ctx.typedObjList())
-
-    def visitPredicatesDef(self, ctx):
-        return [self.visit(p) for p in ctx.predicateDef()]
-
-    def visitPredicateDef(self, ctx):
-        return Predicate(self.visit(ctx.predicate),
-                         self.visit(ctx.typedVarList()))
-
-    def visitNameDef(self, ctx) -> str:
+    def visitType_def_list(self, ctx:antlrHDDLParser.Type_def_listContext):
         if ctx.NAME():
-            if ctx.name.text is None:
-                LOGGER.error("None name in %s", ctx)
-            return ctx.name.text
-        if ctx.EQUALS():
-            return '='
-        return ''
-
-    def visitStructureDef(self, ctx):
-        if ctx.actionDef():
-            return self.visit(ctx.actionDef())
-        if ctx.taskDef():
-            return self.visit(ctx.taskDef())
-        if ctx.methodDef():
-            return self.visit(ctx.methodDef())
-        return None
-
-    def visitActionDef(self, ctx):
-        parameters = self.visit(ctx.parameters) if ctx.parameters else ()
-        preconditions = self.visit(
-            ctx.precondition) if ctx.precondition else AndFormula([])
-        #sortof = AndFormula([AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
-        return Action(ctx.name.text,
-                      parameters=parameters,
-                      precondition=preconditions,#AndFormula([preconditions, sortof]),
-                      effect=(self.visit(ctx.effect) if ctx.effect else ()),
-                      observe=(self.visit(ctx.observe)
-                               if ctx.observe else None))
-
-    def visitTaskDef(self, ctx):
-        return Task(ctx.name.text,
-                    parameters=(self.visit(ctx.parameters)
-                                if ctx.parameters else ()))
-
-    def visitMethodDef(self, ctx):
-        parameters = self.visit(ctx.parameters) if ctx.parameters else ()
-        preconditions = self.visit(
-            ctx.precondition) if ctx.precondition else AndFormula([])
-        #sortof = AndFormula(
-        #    [AtomicFormula('__sortof', [p.name, p.type]) for p in parameters])
-        if ctx.tn is None:
-            tn = None
-            constraints = AndFormula([])
+            return [Type(n.symbol.text, 'object') for n in ctx.NAME()]
+        # subtypes def
+        if ctx.var_type():
+            supertype = self.visit(ctx.var_type())
         else:
-            tn, constraints = self.visit(ctx.tn)
-        return Method(ctx.name.text,
-                      self.visit(ctx.task),
+            supertype = 'object'
+        new_types = []
+        if ctx.new_types():
+            for t in self.visit(ctx.new_types()):
+                new_types.append(Type(t, supertype))
+        if ctx.type_def_list():
+            new_types += self.visit(ctx.type_def_list())
+        return new_types
+
+    def visitVar_type(self, ctx:antlrHDDLParser.Var_typeContext):
+        if ctx.NAME():
+            return ctx.NAME().symbol.text
+        else:
+            raise AttributeError(ctx)
+
+    def visitNew_types(self, ctx:antlrHDDLParser.New_typesContext):
+        return [n.symbol.text for n in ctx.NAME()]
+
+    def visitConst_def(self, ctx:antlrHDDLParser.Const_defContext):
+        return self.visit(ctx.typed_obj_list())
+
+    def visitTyped_obj_list(self, ctx:antlrHDDLParser.Typed_obj_listContext):
+        return [self.visit(o) for o in ctx.typed_objs()]
+
+    def visitTyped_objs(self, ctx:antlrHDDLParser.Typed_objsContext):
+        if ctx.var_type():
+            supertype = self.visit(ctx.var_type())
+        else:
+            supertype = 'object'
+        new_consts = []
+        for t in self.visit(ctx.new_consts()):
+            new_consts.append(Constant(t, supertype))
+
+    def visitAction_def(self, ctx:antlrHDDLParser.Action_defContext):
+        return self.visit(ctx.task_def())
+
+    def visitTask_def(self, ctx:antlrHDDLParser.Task_defContext):
+        name = self.visit(ctx.task_symbol())
+        parameters = self.visit(ctx.typed_var_list())
+        precondition = self.visit(ctx.gd()) if ctx.gd() else []
+        effect = self.visit(ctx.effect()) if ctx.effect() else []
+        return Action(name,
                       parameters=parameters,
-                      precondition=AndFormula([preconditions, constraints]),#, sortof]),
+                      precondition=precondition,
+                      effect=effect)
+                      #observe=(self.visit(ctx.observe)
+                      #         if ctx.observe else None))
+
+    def visitTask_symbol(self, ctx:antlrHDDLParser.Task_symbolContext):
+        return ctx.NAME().symbol.text
+
+    def visitTyped_var_list(self, ctx:antlrHDDLParser.Typed_var_listContext):
+        return [v for t in ctx.typed_vars() for v in self.visit(t)]
+
+    def visitTyped_vars(self, ctx:antlrHDDLParser.Typed_varsContext):
+        if ctx.var_type():
+            supertype = self.visit(ctx.var_type())
+        else:
+            supertype = 'object'
+        new_vars = []
+        for v in ctx.VAR_NAME():
+            new_vars.append(Variable(v.symbol.text, supertype))
+        return new_vars
+
+    def visitEffect(self, ctx:antlrHDDLParser.EffectContext):
+        if ctx.eff_empty(): return self.visit(ctx.eff_empty())
+        if ctx.eff_conjunction(): return self.visit(ctx.eff_conjunction())
+        if ctx.eff_universal(): return self.visit(ctx.eff_universal())
+        if ctx.eff_conditional(): return self.visit(ctx.eff_conditional())
+        if ctx.literal(): return self.visit(ctx.literal())
+        if ctx.p_effect(): return self.visit(ctx.p_effect())
+
+    def visitEff_empty(self, ctx:antlrHDDLParser.Eff_emptyContext):
+        return AndFormula([])
+
+    def visitEff_conjunction(self, ctx:antlrHDDLParser.Eff_conjunctionContext):
+        return AndFormula([self.visit(e) for e in ctx.effect()])
+
+    def visitEff_universal(self, ctx:antlrHDDLParser.Eff_universalContext):
+        return ForallFormula(self.visit(ctx.typed_var_list()), 
+                             self.visit(ctx.effect))
+
+    def visitEff_conditional(self, ctx:antlrHDDLParser.Eff_conditionalContext):
+        return WhenEffect(self.visit(ctx.gd()),
+                          self.visit(ctx.effect()))
+
+    def visitNeg_atomic_formula(self, ctx:antlrHDDLParser.Neg_atomic_formulaContext):
+        return NotFormula(self.visit(ctx.atomic_formula()))
+
+    def visitAtomic_formula(self, ctx:antlrHDDLParser.Atomic_formulaContext):
+        return AtomicFormula(self.visit(ctx.predicate()),
+                             [self.visit(t) for t in ctx.var_or_const()])
+
+    def visitPredicate(self, ctx:antlrHDDLParser.PredicateContext):
+        return ctx.NAME().symbol.text
+
+    def visitVar_or_const(self, ctx:antlrHDDLParser.Var_or_constContext):
+        if ctx.NAME():
+            return ctx.NAME().symbol.text
+        elif ctx.VAR_NAME():
+            return ctx.VAR_NAME().symbol.text
+        else:
+            raise AttributeError(ctx)
+
+    def visitP_effect(self, ctx:antlrHDDLParser.P_effectContext):
+        return FluentEffect(self.visit(ctx.assign_op()),
+                            self.visit(ctx.f_head()),
+                            self.visit(ctx.f_exp()))
+
+    def visitAssign_op(self, ctx:antlrHDDLParser.Assign_opContext):
+        return ctx.start.text
+
+    def visitF_head(self, ctx:antlrHDDLParser.F_headContext):
+        return AtomicFormula(self.visit(ctx.func_symbol()),
+                             [self.visit(t) for t in ctx.term()])
+
+    def visitFunc_symbol(self, ctx:antlrHDDLParser.Func_symbolContext):
+        return ctx.NAME().symbol.text
+
+    def visitTerm(self, ctx:antlrHDDLParser.TermContext):
+        if ctx.NAME():
+            return ctx.NAME().symbol.text
+        elif ctx.VAR_NAME():
+            return ctx.VAR_NAME().symbol.text
+        elif ctx.functionterm():
+            return self.visit(ctx.functionterm())
+        else:
+            raise AttributeError(ctx)
+
+    def visitFunctionterm(self, ctx:antlrHDDLParser.FunctiontermContext):
+        return AtomicFormula(self.visit(ctx.func_symbol()),
+                             [self.visit(t) for t in ctx.term()])
+
+    def visitComp_task_def(self, ctx:antlrHDDLParser.Comp_task_defContext):
+        a = self.visit(ctx.task_def())
+        return Task(a.name, a.parameters)
+
+    def visitMethod_def(self, ctx:antlrHDDLParser.Method_defContext):
+        name = self.visit(ctx.method_symbol())
+        task = AtomicFormula(self.visit(ctx.task_symbol()), 
+                             [self.visit(t) for t in ctx.var_or_const()])
+        parameters = self.visit(ctx.typed_var_list()) if ctx.typed_var_list() else []
+        precondition = self.visit(ctx.gd()) if ctx.gd() else AndFormula([])
+        effect = self.visit(ctx.effect()) if ctx.effect() else AndFormula([])
+        tn = self.visit(ctx.tasknetwork_def())
+        return Method(name, task,
+                      parameters=parameters,
+                      precondition=precondition,
+                      effect=effect,
                       tn=tn)
 
-    def visitTaskNetworkDef(self, ctx):
-        subtasks = self.visit(ctx.subtasks)
+    def visitMethod_symbol(self, ctx:antlrHDDLParser.Method_symbolContext):
+        return ctx.NAME().symbol.text
+
+    def visitTasknetwork_def(self, ctx:antlrHDDLParser.Tasknetwork_defContext):
+        subtasks = self.visit(ctx.subtask_defs())
         ordering = defaultdict(list)
-        if ctx.ORDERED():
+        if ':ordered' in ctx.start.text:
             subtasks_i, subtasks_j = itertools.tee(subtasks)
             next(subtasks_j, None)
             for s_i, s_j in zip(subtasks_i, subtasks_j):
                 ordering[s_i[0]].append(s_j[0])
-        elif ctx.ORDERING():
-            order = self.visit(ctx.orderingDefs())
+        elif ctx.ordering_defs():
+            order = self.visit(ctx.ordering_defs())
             for head, tail in order:
                 for task in tail:
                     ordering[head].append(task)
-        return TaskNetwork(subtasks, ordering), (self.visit(ctx.constraints) if ctx.constraints else AndFormula([]))
+        constraints = self.visit(ctx.constraint_defs()) if ctx.constraint_defs() else []
+        causal_links = self.visit(ctx.causallink_defs()) if ctx.causallink_defs() else []
+        return TaskNetwork(subtasks, ordering, constraints, causal_links)
 
-    def visitOrderingDefs(self, ctx):
-        return [self.visit(o) for o in ctx.order]
+    def visitSubtask_defs(self, ctx:antlrHDDLParser.Subtask_defsContext):
+        return [self.visit(t) for t in ctx.subtask_def()]
 
-    def visitOrderingDef(self, ctx):
-        return (ctx.head.text, [t.text for t in ctx.tail])
+    def visitSubtask_def(self, ctx:antlrHDDLParser.Subtask_defContext):
+        id = self.visit(ctx.subtask_id()) if ctx.subtask_id() else f"task{self.index_task()}"
+        return (id, AtomicFormula(self.visit(ctx.task_symbol()),
+                                  [self.visit(t) for t in ctx.var_or_const()]))
 
-    def visitSubtasksDef(self, ctx):
-        return [self.visit(s) for s in ctx.tasks]
+    def visitOrdering_defs(self, ctx:antlrHDDLParser.Ordering_defsContext):
+        return [self.visit(o) for o in ctx.ordering_def()]
 
-    def visitSubtaskDef(self, ctx):
-        return ((f'task{self.index_task()}'
-                 if ctx.taskId is None else ctx.taskId.text),
-                self.visit(ctx.atomicFormula()))
+    def visitOrdering_def(self, ctx:antlrHDDLParser.Ordering_defContext):
+        return (self.visit(i) for i in ctx.subtask_id())
 
-    def visitConstraintDefs(self, ctx):
-        if ctx.AND():
-            return AndFormula([self.visit(constraint)
-                               for constraint in ctx.constraintDef()])
-        return self.visit(ctx.constraintDef(0))
+    def visitPredicates_def(self, ctx:antlrHDDLParser.Predicates_defContext):
+        return [self.visit(p) for p in ctx.atomic_formula_skeleton()]
 
-    def visitConstraintDef(self, ctx):
-        if ctx.NOT():
-            return NotFormula(self.visit(ctx.constraintDef()))
-        if ctx.EQUALS():
-            return AtomicFormula('=', [ctx.left.text, ctx.right.text])
-        return ()
+    def visitAtomic_formula_skeleton(self, ctx:antlrHDDLParser.Atomic_formula_skeletonContext):
+        return Predicate(self.visit(ctx.predicate()),
+                         self.visit(ctx.typed_var_list()))
 
-    def visitGoalDef(self, ctx):
-        if ctx.literal():
-            return self.visit(ctx.literal())
-        if ctx.atomicFormula():
-            return self.visit(ctx.atomicFormula())
-        if ctx.FORALL():
-            return ForallFormula(self.visit(ctx.variables), self.visit(ctx.gd))
-        if ctx.AND():
-            return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return AndFormula([])
+    def visitFuntions_def(self, ctx:antlrHDDLParser.Funtions_defContext):
+        functions = []
+        for f in ctx.atomic_formula_skeleton():
+            p = self.visit(f)
+            type = self.visit(ctx.var_type()) if ctx.var_type() else 'number'
+            functions.append(Function(p.name, p.variables, type))
+        return functions
 
-    def visitLiteral(self, ctx):
-        if ctx.NOT():
-            return NotFormula(self.visit(ctx.atomicFormula()))
-        return self.visit(ctx.atomicFormula())
-
-    def visitAtomicFormula(self, ctx):
-        return AtomicFormula(self.visit(ctx.predicate),
-                             [self.visit(t) for t in ctx.arguments])
-
-    def visitTerm(self, ctx):
-        if ctx.NAME():
-            return ctx.name.text
-        return ctx.variable.text
-
-    def visitEffectDef(self, ctx):
-        if ctx.AND():
-            return AndFormula([self.visit(gd) for gd in ctx.ands])
-        if ctx.cEffect():
-            return AndFormula([self.visit(ctx.cEffect(0))])
-        return AndFormula([])
-
-    def visitCEffect(self, ctx):
-        if ctx.FORALL():
-            # TODO
-            return ()
-        if ctx.WHEN():
-            return WhenEffect(self.visit(ctx.goalDef()),
-                              self.visit(ctx.condEffect()))
-        return self.visit(ctx.literal())
-
-    def visitCondEffect(self, ctx):
-        if ctx.AND():
-            return AndFormula([self.visit(gd) for gd in ctx.ands])
-        return AndFormula([self.visit(ctx.literal(0))])
-
-    def visitObserveDef(self, ctx):
-        return self.visit(ctx.atomicFormula())
-
-    def visitProblem(self, ctx):
-        return Problem(
-            ctx.pname.text,
-            ctx.dname.text,
-            self.visit(ctx.init()),
-            goal=(self.visit(ctx.goal()) if ctx.goal() else None),
-            htn=(self.visit(ctx.htn) if ctx.htn else None),
-            requirements=(self.visit(ctx.requirements)
-                          if ctx.requirements else []),
-            objects=(self.visit(ctx.objects) if ctx.objects else [])
-        )
-
-    def visitObjectDeclaration(self, ctx):
-        return self.visit(ctx.typedObjList())
-
-    def visitInit(self, ctx):
-        return [self.visit(x) for x in ctx.initEl()]
-
-    def visitInitEl(self, ctx):
-        if ctx.UNKNOWN():
-            return UnknownLiteral(self.visit(ctx.atomicFormula()))
-        if ctx.OR():
-            return OrBelief([self.visit(x) for x in ctx.choices])
-        if ctx.ONEOF():
-            return OneOfBelief([self.visit(x) for x in ctx.xchoices])
-        return self.visit(ctx.literal(0))
-
-    def visitGoal(self, ctx):
-        return self.visit(ctx.goalDef())
-
-    def visitHtnDef(self, ctx):
-        if ctx.tn is None:
-            tn = None
-            constraints = ()
-        else:
-            tn, constraints = self.visit(ctx.tn)
-        return Method('__top_method', AtomicFormula('__top'),
-                      parameters=(self.visit(ctx.parameters)
-                                  if ctx.parameters else ()),
-                      precondition=constraints,
-                      tn=tn)
+    

@@ -4,7 +4,6 @@ from typing import List
 
 
 class Type:
-
     """PDDL type.
 
     :param name: type name
@@ -25,20 +24,26 @@ class Type:
         """Get super type."""
         return self.__type
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.type:
             return "{} - {}".format(self.name, self.type)
         return self.name
 
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return self.__name.__hash__()
+
 
 class Constant(Type):
-
     """PDDL constant."""
 
 
 class Variable(Type):
-
     """Variable used in predicates and similar constructs."""
+    def __str__(self) -> str:
+        return Type.__str__(self)
 
 
 class Predicate:
@@ -68,3 +73,17 @@ class Predicate:
 
     def __lt__(self, other: 'Predicate'):
         return self.__name < other.__name
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return self.__name.__hash__()
+
+class Function(Predicate):
+    def __init__(self, name: str, variables: List[Variable] = [], type = 'number'):
+        super().__init__(name, variables)
+        self.type = type
+
+    def __str__(self):
+        return f"({super().__str__()}) - {self.type}"

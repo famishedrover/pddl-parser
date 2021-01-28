@@ -11,13 +11,18 @@ from .problem import Problem
 DOMAIN_TEMPLATE = Template("""
 (define (domain {{ domain.name }})
     {% if domain.requirements %}(:requirements
-        {%- for x in domain.requirements %}{{ x }}{% endfor %}){% endif %}
-    {% if domain.types %}(:types
-        {%- for x in domain.types %} {{ x }}{% endfor %}){% endif %}
+        {%- for x in domain.requirements %} {{ x }}{% endfor %}){% endif %}
+    {% if domain.types %}(:types {% for x in domain.types %}
+        {{ x }}{% endfor %}
+    ){% endif %}
     {% if domain.constants %}(:constants
         {%- for x in domain.constants %} {{ x }}{% endfor %}){% endif %}
     {% if domain.predicates %}(:predicates {% for x in domain.predicates %}
         ({{ x.name }}{% for v in x.variables %} {{ v }}{% endfor %})
+        {%- endfor %}
+    ){% endif %}
+    {% if domain.functions %}(:functions {% for x in domain.functions %}
+        ({{ x.name }}{% for v in x.variables %} {{ v }}{% endfor %}) - {{ x.type }}
         {%- endfor %}
     ){% endif %}
     {% for t in domain.tasks %}

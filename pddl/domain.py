@@ -53,6 +53,14 @@ class Action:
         """Get observation effect."""
         return self.__observe
 
+    def __str__(self) -> str:
+        return f"""
+    (:action {self.name}
+        :parameters ({' '.join(map(str, self.parameters))})
+        :precondition {self.precondition}
+        :effect {self.effect}
+    )"""
+
 
 class Domain:
 
@@ -69,23 +77,35 @@ class Domain:
     """
 
     def __init__(self, name: str,
-                 requirements: List[str] = (),
-                 types: List[Type] = (),
-                 constants: List[Constant] = (),
-                 predicates: List[Predicate] = (),
-                 actions: Dict[str, Action] = dict(),
-                 tasks: Dict[str, Task] = dict(),
-                 methods: Dict[str, Method] = dict()):
+                 requirements: List[str] = [],
+                 types: List[Type] = [],
+                 constants: List[Constant] = [],
+                 predicates: List[Predicate] = [],
+                 functions = [],
+                 actions: List[Action] = [],
+                 tasks: List[Task] = [],
+                 methods: List[Method] = []):
         self.__name = name
-        self.__requirements = requirements
-        self.__types = types
-        self.__constants = constants
-        self.__predicates = {p.name: p for p in predicates}
-        self.__actions = actions
-        self.__tasks = tasks
-        self.__methods = methods
-        for method in self.__methods.values():
-            self.__tasks[method.task.name].add_method(method)
+        self.__requirements = list(set(requirements))
+        self.__types = list(set(types))
+        self.__constants = list(set(constants))
+        self.__predicates = list(set(predicates))
+        self.__actions = list(set(actions))
+        self.__tasks = list(set(tasks))
+        self.__methods = list(set(methods))
+        self.functions = list(set(functions))
+
+    def merge(self, other: 'Domain') -> 'Domain':
+        return Domain(self.name,
+            requirements=self.requirements + other.requirements,
+            types=self.types + other.types,
+            constants=self.constants + other.constants,
+            predicates=self.predicates + other.predicates,
+            functions=self.functions + other.functions,
+            actions=self.actions + other.actions,
+            tasks=self.tasks + other.tasks,
+            methods=self.methods + other.methods
+        )
 
     @property
     def name(self) -> str:
@@ -110,47 +130,26 @@ class Domain:
     @property
     def predicates(self) -> List[Predicate]:
         """Get predicates."""
-        return self.__predicates.values()
-
-    def get_predicate(self, predicate: str) -> Predicate:
-        """Get predicate by name."""
-        return self.__predicates[predicate]
+        return self.__predicates
 
     @property
-    def actions(self) -> Iterator[Action]:
+    def actions(self) -> List[Action]:
         """Get actions."""
-        return self.__actions.values()
-
-    def get_action(self, action: str) -> Action:
-        """Get action by name."""
-        return self.__actions[action]
-
-    def has_action(self, action: str) -> bool:
-        """Return true if action exists."""
-        return action in self.__actions
+        return self.__actions
 
     @property
-    def tasks(self) -> Iterator[Task]:
+    def tasks(self) -> List[Task]:
         """Get tasks."""
-        return self.__tasks.values()
-
-    def get_task(self, task: str) -> Action:
-        """Get task by name."""
-        return self.__tasks[task]
-
-    def has_task(self, task: str) -> bool:
-        """Return true if task exists."""
-        return task in self.__tasks
+        return self.__tasks
 
     @property
-    def methods(self) -> Iterator[Method]:
+    def methods(self) -> List[Method]:
         """Get methods."""
-        return self.__methods.values()
+        return self.__methods
 
-    def get_method(self, method: str) -> Method:
-        """Get method by name."""
-        return self.__methods[method]
-
-    def has_method(self, method: str) -> bool:
-        """Return true if method exists."""
-        return method in self.__methods
+    def __str__(self) -> str:
+        nl = '\n'
+        return f"""(define (domain {self.name}))
+    (:requirements {' '.join(self.requirements)})
+    (:types {nl.join(map(str, self.types))})
+)"""

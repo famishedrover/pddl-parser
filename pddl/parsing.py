@@ -1,8 +1,8 @@
 """PDDL parsing functions."""
 
 import antlr4
-from .parser.PDDLLexer import PDDLLexer
-from .parser.PDDLParser import PDDLParser
+from .parser.antlrHDDLParser import antlrHDDLParser as PDDLParser
+from .parser.antlrHDDLLexer import antlrHDDLLexer as PDDLLexer
 from .visitor import PDDLVisitor
 from .domain import Domain
 from .problem import Problem

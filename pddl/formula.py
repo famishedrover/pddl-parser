@@ -128,3 +128,13 @@ class WhenEffect:
 
     def __str__(self):
         return '(when ' + str(self.condition) + ' ' + str(self.effect) + ')'
+
+
+class FluentEffect:
+    def __init__(self, op, head, exp):
+        self.op = op
+        self.head = head
+        self.exp = exp
+
+    def __str__(self) -> str:
+        return f"({self.op} {self.head} {self.exp})"
