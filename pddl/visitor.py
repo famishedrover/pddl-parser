@@ -13,7 +13,7 @@ from .formula import AtomicFormula, NotFormula, AndFormula
 from .formula import ForallFormula, WhenEffect, FluentEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
-from .expression import Number, Function, UnaryOp, MultiOp
+from .expression import Number, FunctionExp, UnaryOp, MultiOp
 from .logger import LOGGER
 
 
@@ -339,9 +339,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
         if ctx.NUMBER():
             return Number(ctx.NUMBER())
         elif ctx.start.text == 'total-time':
-            return Function('total-time')
+            return FunctionExp('total-time')
         elif ctx.func_symbol():
-            return Function(self.visit(ctx.func_symbol()), [n.symbol.text for n in ctx.NAME()])
+            return FunctionExp(self.visit(ctx.func_symbol()), [n.symbol.text for n in ctx.NAME()])
         elif ctx.bin_op():
             return MultiOp(self.visit(ctx.bin_op()), [self.visit(e) for e in ctx.ground_f_exp()])
         elif ctx.multi_op():

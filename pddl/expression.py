@@ -12,7 +12,7 @@ class Number:
         return self.value
 
 
-class Function:
+class FunctionExp:
     def __init__(self, func_symbol, parameters: List = []):
         self.function = func_symbol
         self.parameters = parameters
