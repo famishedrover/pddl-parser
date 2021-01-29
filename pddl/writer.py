@@ -85,6 +85,7 @@ PROBLEM_TEMPLATE = Template("""
     {% if problem.goal %}(:goal
         {{ problem.goal }}
     ){% endif %}
+    {% if problem.metric %}(:metric {{ problem.metric[0] }} {{ problem.metric[1] }}){% endif %}
 )
 """)
 

@@ -13,11 +13,11 @@ from .formula import AtomicFormula, NotFormula, AndFormula
 from .formula import ForallFormula, WhenEffect, FluentEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
+from .expression import Number, Function, UnaryOp, MultiOp
 from .logger import LOGGER
 
 
 class PDDLVisitor(AbstractPDDLVisitor):
-
     """PDDL Visitor implementation."""
 
     def __init__(self):
@@ -30,6 +30,14 @@ class PDDLVisitor(AbstractPDDLVisitor):
         i = self.task_index
         self.task_index += 1
         return i
+
+    def visitHddl_file(self, ctx:antlrHDDLParser.Hddl_fileContext):
+        if ctx.domain():
+            return self.visit(ctx.domain())
+        elif ctx.problem():
+            return self.visit(ctx.problem())
+        else:
+            raise AttributeError(ctx)
 
     def visitDomain(self, ctx: antlrHDDLParser.DomainContext):
         name = self.visit(ctx.domain_symbol())
@@ -104,7 +112,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return self.visit(ctx.typed_obj_list())
 
     def visitTyped_obj_list(self, ctx:antlrHDDLParser.Typed_obj_listContext):
-        return [self.visit(o) for o in ctx.typed_objs()]
+        return [v for o in ctx.typed_objs() for v in self.visit(o)]
 
     def visitTyped_objs(self, ctx:antlrHDDLParser.Typed_objsContext):
         if ctx.var_type():
@@ -112,8 +120,13 @@ class PDDLVisitor(AbstractPDDLVisitor):
         else:
             supertype = 'object'
         new_consts = []
-        for t in self.visit(ctx.new_consts()):
+        for c in ctx.new_consts():
+            t = self.visit(c)
             new_consts.append(Constant(t, supertype))
+        return new_consts
+
+    def visitNew_consts(self, ctx:antlrHDDLParser.New_constsContext):
+        return ctx.NAME().symbol.text
 
     def visitAction_def(self, ctx:antlrHDDLParser.Action_defContext):
         return self.visit(ctx.task_def())
@@ -282,4 +295,56 @@ class PDDLVisitor(AbstractPDDLVisitor):
             functions.append(Function(p.name, p.variables, type))
         return functions
 
-    
+    ############# PROBLEM ##################################################
+
+    def visitProblem(self, ctx:antlrHDDLParser.ProblemContext):
+        objects = self.visit(ctx.p_object_declaration()) if ctx.p_object_declaration() else []
+        requirements = self.visit(ctx.require_def()) if ctx.require_def() else []
+        init = self.visit(ctx.p_init())
+        goal = self.visit(ctx.p_goal()) if ctx.p_goal() else AndFormula([])
+        htn = self.visit(ctx.p_htn()) if ctx.p_htn() else None
+        # constraints
+        metric = self.visit(ctx.metric_spec()) if ctx.metric_spec() else None
+        return Problem(ctx.NAME(0),
+                 ctx.NAME(0), # domain
+                 init=init,
+                 goal=goal,
+                 htn=htn,
+                 requirements=requirements,
+                 objects=objects,
+                 metric=metric)
+
+    def visitP_object_declaration(self, ctx:antlrHDDLParser.P_object_declarationContext):
+        return self.visit(ctx.typed_obj_list())
+
+    def visitP_init(self, ctx:antlrHDDLParser.P_initContext):
+        return [self.visit(i) for i in ctx.init_el()]
+
+    def visitNum_init(self, ctx:antlrHDDLParser.Num_initContext):
+        return Predicate('=', [self.visit(ctx.f_head()), ctx.NUMBER()])
+
+    def visitP_htn(self, ctx:antlrHDDLParser.P_htnContext):
+        params = self.visit(ctx.typed_var_list()) if ctx.typed_var_list() else []
+        return Method('__top_method__', 
+                      AtomicFormula('__top__', params),
+                      tn=self.visit(ctx.tasknetwork_def()))
+
+    def visitMetric_spec(self, ctx:antlrHDDLParser.Metric_specContext):
+        return (self.visit(ctx.optimization()), self.visit(ctx.ground_f_exp()))
+
+    def visitOptimization(self, ctx:antlrHDDLParser.OptimizationContext):
+        return ctx.start.text
+
+    def visitGround_f_exp(self, ctx:antlrHDDLParser.Ground_f_expContext):
+        if ctx.NUMBER():
+            return Number(ctx.NUMBER())
+        elif ctx.start.text == 'total-time':
+            return Function('total-time')
+        elif ctx.func_symbol():
+            return Function(self.visit(ctx.func_symbol()), [n.symbol.text for n in ctx.NAME()])
+        elif ctx.bin_op():
+            return MultiOp(self.visit(ctx.bin_op()), [self.visit(e) for e in ctx.ground_f_exp()])
+        elif ctx.multi_op():
+            return MultiOp(self.visit(ctx.multi_op()), [self.visit(e) for e in ctx.ground_f_exp()])
+        else: # should be '( - <expr> )'
+            return UnaryOp('-', self.visit(ctx.ground_f_exp()))

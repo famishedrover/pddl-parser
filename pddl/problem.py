@@ -32,15 +32,28 @@ class Problem:
                  init: List[INITELT],
                  goal: GOAL = None,
                  htn: Method = None,
-                 requirements: List[str] = (),
-                 objects: List[Constant] = ()):
+                 requirements: List[str] = [],
+                 objects: List[Constant] = [],
+                 metric = None):
         self.__name = name
         self.__domain = domain
         self.__init = init
         self.__goal = goal
         self.__htn = htn
-        self.__requirements = requirements
-        self.__objects = objects
+        self.__requirements = list(set(requirements))
+        self.__objects = list(set(objects))
+        self.metric = metric
+
+    def merge(self, other: 'Problem') -> 'Problem':
+        return Problem(
+            self.name, self.domain,
+            self.init + other.init,
+            AndFormula([self.goal, other.goal]),
+            self.htn if self.htn else other.htn,
+            self.requirements + other.requirements,
+            self.objects + other.objects,
+            self.metric if self.metric else other.metric
+        )
 
     @property
     def name(self) -> str:
