@@ -9,7 +9,7 @@ from .parser.antlrHDDLParser import antlrHDDLParser
 from .domain import Domain, Type, Constant, Variable, Predicate, Action
 from .variable import Function
 from .problem import Problem
-from .formula import AtomicFormula, NotFormula, AndFormula
+from .formula import AtomicFormula, NotFormula, AndFormula, EmptyFormula
 from .formula import ForallFormula, WhenEffect, FluentEffect
 from .belief import UnknownLiteral, OrBelief, OneOfBelief
 from .hierarchy import Task, Method, TaskNetwork
@@ -134,8 +134,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
     def visitTask_def(self, ctx:antlrHDDLParser.Task_defContext):
         name = self.visit(ctx.task_symbol())
         parameters = self.visit(ctx.typed_var_list())
-        precondition = self.visit(ctx.gd()) if ctx.gd() else []
-        effect = self.visit(ctx.effect()) if ctx.effect() else []
+        precondition = self.visit(ctx.gd()) if ctx.gd() else EmptyFormula()
+        effect = self.visit(ctx.effect()) if ctx.effect() else EmptyFormula()
         return Action(name,
                       parameters=parameters,
                       precondition=precondition,
@@ -168,7 +168,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         if ctx.p_effect(): return self.visit(ctx.p_effect())
 
     def visitEff_empty(self, ctx:antlrHDDLParser.Eff_emptyContext):
-        return AndFormula([])
+        return EmptyFormula()
 
     def visitEff_conjunction(self, ctx:antlrHDDLParser.Eff_conjunctionContext):
         return AndFormula([self.visit(e) for e in ctx.effect()])
@@ -237,8 +237,8 @@ class PDDLVisitor(AbstractPDDLVisitor):
         task = AtomicFormula(self.visit(ctx.task_symbol()), 
                              [self.visit(t) for t in ctx.var_or_const()])
         parameters = self.visit(ctx.typed_var_list()) if ctx.typed_var_list() else []
-        precondition = self.visit(ctx.gd()) if ctx.gd() else AndFormula([])
-        effect = self.visit(ctx.effect()) if ctx.effect() else AndFormula([])
+        precondition = self.visit(ctx.gd()) if ctx.gd() else EmptyFormula()
+        effect = self.visit(ctx.effect()) if ctx.effect() else EmptyFormula()
         tn = self.visit(ctx.tasknetwork_def())
         return Method(name, task,
                       parameters=parameters,
@@ -251,17 +251,18 @@ class PDDLVisitor(AbstractPDDLVisitor):
 
     def visitTasknetwork_def(self, ctx:antlrHDDLParser.Tasknetwork_defContext):
         subtasks = self.visit(ctx.subtask_defs())
-        ordering = defaultdict(list)
         if ':ordered' in ctx.start.text:
+            ordering_forms = []
             subtasks_i, subtasks_j = itertools.tee(subtasks)
             next(subtasks_j, None)
             for s_i, s_j in zip(subtasks_i, subtasks_j):
-                ordering[s_i[0]].append(s_j[0])
+                ordering_forms.append(AtomicFormula('<', [s_i[0], s_j[0]]))
+            ordering = AndFormula(ordering_forms)
         elif ctx.ordering_defs():
-            order = self.visit(ctx.ordering_defs())
-            for head, tail in order:
-                for task in tail:
-                    ordering[head].append(task)
+            ordering = AndFormula(self.visit(ctx.ordering_defs()))
+        else:
+            ordering = EmptyFormula()
+
         constraints = self.visit(ctx.constraint_defs()) if ctx.constraint_defs() else []
         causal_links = self.visit(ctx.causallink_defs()) if ctx.causallink_defs() else []
         return TaskNetwork(subtasks, ordering, constraints, causal_links)
@@ -278,7 +279,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return [self.visit(o) for o in ctx.ordering_def()]
 
     def visitOrdering_def(self, ctx:antlrHDDLParser.Ordering_defContext):
-        return (self.visit(i) for i in ctx.subtask_id())
+        return AtomicFormula('<', [self.visit(i) for i in ctx.subtask_id()])
 
     def visitPredicates_def(self, ctx:antlrHDDLParser.Predicates_defContext):
         return [self.visit(p) for p in ctx.atomic_formula_skeleton()]
@@ -348,3 +349,50 @@ class PDDLVisitor(AbstractPDDLVisitor):
             return MultiOp(self.visit(ctx.multi_op()), [self.visit(e) for e in ctx.ground_f_exp()])
         else: # should be '( - <expr> )'
             return UnaryOp('-', self.visit(ctx.ground_f_exp()))
+
+    ############################ GD ################################################
+
+    def visitGd_empty(self, ctx:antlrHDDLParser.Gd_emptyContext):
+        return EmptyFormula()
+
+    def visitGd_conjuction(self, ctx:antlrHDDLParser.Gd_conjuctionContext):
+        return AndFormula([self.visit(g) for g in ctx.gd()])
+
+    def visitGd_disjuction(self, ctx:antlrHDDLParser.Gd_disjuctionContext):
+        raise AttributeError(ctx)
+
+    def visitGd_negation(self, ctx:antlrHDDLParser.Gd_negationContext):
+        return NotFormula(self.visit(ctx.gd()))
+
+    def visitGd_implication(self, ctx:antlrHDDLParser.Gd_implicationContext):
+        raise AttributeError(ctx)
+
+    def visitGd_existential(self, ctx:antlrHDDLParser.Gd_existentialContext):
+        raise AttributeError(ctx)
+
+    def visitGd_universal(self, ctx:antlrHDDLParser.Gd_universalContext):
+        return ForallFormula(self.visit(ctx.typed_var_list()), self.visit(ctx.gd()))
+
+    def visitGd_equality_constraint(self, ctx:antlrHDDLParser.Gd_equality_constraintContext):
+        return AtomicFormula('=', [self.visit(v) for v in ctx.var_or_const()])
+
+    def visitGd_ltl_at_end(self, ctx:antlrHDDLParser.Gd_ltl_at_endContext):
+        raise AttributeError(ctx)
+
+    def visitGd_ltl_always(self, ctx:antlrHDDLParser.Gd_ltl_alwaysContext):
+        raise AttributeError(ctx)
+
+    def visitGd_ltl_sometime(self, ctx:antlrHDDLParser.Gd_ltl_sometimeContext):
+        raise AttributeError(ctx)
+
+    def visitGd_ltl_at_most_once(self, ctx:antlrHDDLParser.Gd_ltl_at_most_onceContext):
+        raise AttributeError(ctx)
+
+    def visitGd_ltl_sometime_after(self, ctx:antlrHDDLParser.Gd_ltl_sometime_afterContext):
+        raise AttributeError(ctx)
+
+    def visitGd_ltl_sometime_before(self, ctx:antlrHDDLParser.Gd_ltl_sometime_beforeContext):
+        raise AttributeError(ctx)
+
+    def visitGd_preference(self, ctx:antlrHDDLParser.Gd_preferenceContext):
+        raise AttributeError(ctx)

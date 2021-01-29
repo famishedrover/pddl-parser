@@ -40,10 +40,7 @@ DOMAIN_TEMPLATE = Template("""
         :subtasks (and {% for s in m.network.subtasks %}
             ({{ s[0] }} {{ s[1] }}){% endfor %}
         )
-        :ordering (and {% for head, tail in m.network.ordering.items() %}
-            {% for t in tail %}({{ head }} < {{ t }})
-            {%- endfor %}{% endfor %}
-        )
+        :ordering {{ m.network.ordering }}
     )
     {% endfor %}
     {% for a in domain.actions %}
@@ -51,7 +48,7 @@ DOMAIN_TEMPLATE = Template("""
         {% if a.parameters %}:parameters (
             {%- for v in a.parameters %} {{ v }}{% endfor %} ){% endif %}
         {% if a.precondition %}:precondition {{ a.precondition }}{% endif %}
-        {% if a.effect %}:effect ({{ a.effect }}){% endif %}
+        {% if a.effect %}:effect {{ a.effect }}{% endif %}
         {% if a.observe %}:observe ({{ a.observe }}){% endif %}
     )
     {% endfor %}

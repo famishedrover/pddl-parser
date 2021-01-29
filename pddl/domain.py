@@ -61,6 +61,11 @@ class Action:
         :effect {self.effect}
     )"""
 
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return self.__name.__hash__()
 
 class Domain:
 

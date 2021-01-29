@@ -1,7 +1,7 @@
 """HDDL domain classes."""
 
 from typing import List, Union, Tuple, Dict
-from .formula import AtomicFormula, AndFormula, NotFormula
+from .formula import AtomicFormula, AndFormula, NotFormula, EmptyFormula
 from .variable import Variable
 
 
@@ -50,6 +50,12 @@ class Task:
     (:task {self.name}
         :parameters ({' '.join(map(str, self.parameters))})
     )"""
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return self.__name.__hash__()
 
 
 class Method:
@@ -111,6 +117,12 @@ class Method:
         {self.network}
     )"""
 
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return self.__name.__hash__()
+
 class TaskNetwork:
 
     """Task network model.
@@ -122,13 +134,13 @@ class TaskNetwork:
 
     def __init__(self,
                  subtasks: List[Tuple[str, AtomicFormula]],
-                 ordering: Dict[str, List[str]],
+                 ordering: AndFormula,
                  constraints = None,
                  causal_links = None):
         self.__subtasks = subtasks
-        self.__ordering = ordering
         self.constraints = constraints
         self.causal_links = causal_links
+        self.__ordering = ordering
 
     @property
     def subtasks(self) -> List[Tuple[str, AtomicFormula]]:
@@ -136,7 +148,7 @@ class TaskNetwork:
         return self.__subtasks
 
     @property
-    def ordering(self) -> Dict[str, List[str]]:
+    def ordering(self) -> Union[AndFormula, EmptyFormula]:
         """Get subtasks ordering."""
         return self.__ordering
 
@@ -144,6 +156,4 @@ class TaskNetwork:
         nl = '\n            '
         return f""":subtasks (and 
             {nl.join(f'({id} {formula})' for id, formula in self.subtasks)})
-        :ordering (and
-            {nl.join(f'(< {src} {tgt})' for src, tgts in self.ordering.items() 
-                                        for tgt in tgts)})"""
+        :ordering {self.ordering})"""

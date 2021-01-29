@@ -5,6 +5,10 @@ from .variable import Variable
 GOAL = Union['AtomicFormula', 'NotFormula', 'AndFormula']
 
 
+class EmptyFormula:
+    def __str__(self):
+        return '()'
+
 class AtomicFormula:
 
     """(predicate <argument>*).
