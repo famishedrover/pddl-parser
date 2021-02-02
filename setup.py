@@ -3,10 +3,10 @@
 
 from distutils.core import setup
 
-setup(name='pddl',
+setup(name='planning',
       version='1.0',
-      description='PDDL Parser library',
+      description='Planning library with PDDL/HDDL Parser',
       author='Charles Lesire',
       author_email='charles.lesire@onera.fr',
-      packages=['pddl', 'pddl.parser'],
+      packages=['oara.planning', 'oara.planning.hddl', 'oara.planning.hddl.parser'],
       )

@@ -2,14 +2,18 @@
 	(:requirements :typing :hierachie)
 	(:types
 		waypoint - object
-		rover - object
+		rover - robot
 	)
+	(:constants w0 - waypoint)
 	(:predicates
 		(at ?arg0 - rover ?arg1 - waypoint)
 		(can_traverse ?arg0 - rover ?arg1 - waypoint ?arg2 - waypoint)
 		(visible ?arg0 - waypoint ?arg1 - waypoint)
 		(available ?arg0 - rover)
 		(visited ?arg0 - waypoint)
+	)
+	(:functions
+		(cost-to-go ?r - rover ?w - waypoint)
 	)
 
 	(:task navigate_abs

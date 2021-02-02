@@ -7,7 +7,7 @@ try:
 except ImportError:
     pass
 
-LOGGER = logging.getLogger('pddl')
+LOGGER = logging.getLogger('oara.planning')
 
 
 def setup_logging(level=logging.DEBUG):
