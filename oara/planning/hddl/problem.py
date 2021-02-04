@@ -95,7 +95,7 @@ class HDDLProblem:
         nltab = '\n\t'
         return f"""(define (problem {self.__name})
     (:domain {self.__domain_name})
-    (:requirements {' '.join(self.__requirements)})
+    {f"(:requirements {' '.join(self.__requirements)})" if self.__requirements else ''}
     (:objects 
         {nltab.join(map(str, self.__objects))}
     )
@@ -106,6 +106,6 @@ class HDDLProblem:
     (:init 
         {nltab.join(map(str, self.__init))}
     )
-    (:goal {self.__goal})
+    {f"(:goal {self.__goal})" if self.goal else ''}
     {self.__metric if self.__metric else ''}
 )"""
