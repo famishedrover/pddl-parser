@@ -87,21 +87,14 @@ class HDDLDomain:
 
     def __str__(self) -> str:
         nltab = '\n\t'
-        return f"""(define (domain {self.__name}))
-    (:requirements {' '.join(self.__requirements)})
-    (:types 
-        {nltab.join(map(str, self.__types))}
-    )
-    (:constants 
-        {nltab.join(map(str, self.__constants))}
-    )
-    (:predicates
-        {nltab.join(map(str, self.__predicates))}
-    )
-    (:functions
-        {nltab.join(map(str, self.__functions))}
-    )
-    {nltab.join(map(str, self.__tasks))}
-    {nltab.join(map(str, self.__methods))}
-    {nltab.join(map(str, self.__actions))}
+
+        return f"""(define (domain {self.__name})
+        {f"(:requirements {' '.join(self.__requirements)})" if self.__requirements else ''}
+        {f"(:types {nltab.join(map(str, self.__types))})" if self.__types else ''}
+        {f"(:constants {nltab.join(map(str, self.constants))})" if self.constants else ''}
+        {f"(:predicates {nltab.join(map(str, self.predicates))})" if self.predicates else ''}
+        {f"(:functions {nltab.join(map(str, self.functions))})" if self.functions else ''}
+        {nltab.join(map(str, self.__tasks)) if self.__tasks else ''}
+        {nltab.join(map(str, self.__methods)) if self.__methods else ''}
+        {nltab.join(map(str, self.__actions)) if self.__actions else ''}
 )"""
