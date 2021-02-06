@@ -15,7 +15,7 @@ from .function import Function
 from .action import Action
 from .formula import AtomicFormula, NegFormula
 from .effect import EmptyEffect, ConditionalEffect, ConjunctionEffect, UniversalEffect, PEffect
-from .expression import FluentExpression, Number, OppositeExp, AdditionExp, MultiplicationExp, SubstractionExp, DivisionExp, EqualityExp
+from .expression import FluentExpression, Number, OppositeExp, AdditionExp, MultiplicationExp, SubstractionExp, DivisionExp, EqualityExp, FunctionExp
 from .gd import EmptyGD, ConjunctionGD, DisjunctionGD, ImplicationGD, NegationGD, UniversalGD, ExistentialGD, EqualityGD
 from .hierarchy import Task, Method, Subtask, Ordering, TaskNetwork, OrderedTaskNetwork
 from .metric import Metric
@@ -171,7 +171,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
         return ctx.NAME().symbol.text
 
     def visitF_head(self, ctx:antlrHDDLParser.F_headContext):
-        return FluentExpression(self.visit(ctx.func_symbol()),
+        return FunctionExp(self.visit(ctx.func_symbol()),
                                [self.visit(t) for t in ctx.term()])
 
     def visitTerm(self, ctx:antlrHDDLParser.TermContext):
@@ -185,7 +185,7 @@ class PDDLVisitor(AbstractPDDLVisitor):
             raise AttributeError(ctx)
 
     def visitFunctionterm(self, ctx:antlrHDDLParser.FunctiontermContext):
-        return FluentExpression(self.visit(ctx.func_symbol()),
+        return FunctionExp(self.visit(ctx.func_symbol()),
                                 [self.visit(t) for t in ctx.term()])
 
     def visitP_effect(self, ctx:antlrHDDLParser.P_effectContext):

@@ -120,6 +120,8 @@ class ExistentialGD(AbstractGD):
     def __str__(self) -> str:
         return f"(exists ({' '.join(self.__variables)}) {self.__gd})"
 
+    def ground(self, assignment: Dict[str, str]) -> 'GD':
+        raise NotImplementedError(self)
 
 class UniversalGD(AbstractGD):
     """ Universal Goal.
@@ -136,6 +138,8 @@ class UniversalGD(AbstractGD):
     def __str__(self) -> str:
         return f"(forall ({' '.join(self.__variables)}) {self.__gd})"
 
+    def ground(self, assignment: Dict[str, str]) -> 'GD':
+        raise NotImplementedError(self)
 
 class EqualityGD(AbstractGD, AtomicFormula):
     """ Equality Constraint.
