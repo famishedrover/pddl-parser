@@ -99,13 +99,13 @@ class HDDLProblem:
     (:objects 
         {nltab.join(map(str, self.__objects))}
     )
-    (:htn 
-        {':parameters' if self.__htn_parameters else ''} {' '.join(map(str, self.__htn_parameters))}
-        {self.__htn}
-    )
+    {f"(:htn {f'''{nltab}:parameters {' '.join(map(str, {self.__htn_parameters}))}''' if self.__htn_parameters else ''} {f'''{nltab}{self.__htn})'''}" if self.__htn else ''}
     (:init 
         {nltab.join(map(str, self.__init))}
     )
     {f"(:goal {self.__goal})" if self.goal else ''}
     {self.__metric if self.__metric else ''}
 )"""
+
+
+    # {f"(:htn {nltab.join(f''':parameters {' '.join(map(str, {self.__htn_parameters}))}''') if self.__htn_parameters else ''} {nltab.join({self.__htn})}" if self.__htn else ''}
