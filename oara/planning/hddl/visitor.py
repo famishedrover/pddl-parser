@@ -15,7 +15,7 @@ from .function import Function
 from .action import Action
 from .formula import AtomicFormula, NegFormula
 from .effect import EmptyEffect, ConditionalEffect, ConjunctionEffect, UniversalEffect, PEffect
-from .expression import FluentExpression, Number, OppositeExp, AdditionExp, MultiplicationExp, SubstractionExp, DivisionExp, EqualityExp, FunctionExp
+from .expression import Number, OppositeExp, AdditionExp, MultiplicationExp, SubstractionExp, DivisionExp, EqualityExp, FunctionExp
 from .gd import EmptyGD, ConjunctionGD, DisjunctionGD, ImplicationGD, NegationGD, UniversalGD, ExistentialGD, EqualityGD
 from .hierarchy import Task, Method, Subtask, Ordering, TaskNetwork, OrderedTaskNetwork
 from .metric import Metric
@@ -361,9 +361,9 @@ class PDDLVisitor(AbstractPDDLVisitor):
         if ctx.NUMBER():
             return Number(ctx.NUMBER())
         elif ctx.func_symbol():
-            return FluentExpression(self.visit(ctx.func_symbol()), [n.symbol.text for n in ctx.NAME()])
+            return FunctionExp(self.visit(ctx.func_symbol()), [n.symbol.text for n in ctx.NAME()])
         elif 'total-time' in ctx.start.text:
-            return FluentExpression('total-time')
+            return FunctionExp('total-time')
         elif ctx.bin_op():
             op = self.visit(ctx.bin_op())
             if op == '+': return AdditionExp([self.visit(e) for e in ctx.ground_f_exp()])

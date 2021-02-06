@@ -5,7 +5,7 @@ class AtomicFormula:
     """
     (<predicate> <args*>)
     """
-    def __init__(self, predicate: str, arguments: List[str]):
+    def __init__(self, predicate: str, arguments: List[str] = []):
         self.__predicate = predicate
         self.__arguments = arguments
 
