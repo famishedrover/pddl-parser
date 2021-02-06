@@ -18,7 +18,7 @@ class Number(FluentExpression):
         self.__value = value
 
     def __str__(self):
-        return self.__value
+        return f"{self.__value}"
 
 
 class FunctionExp(FluentExpression, AtomicFormula):
