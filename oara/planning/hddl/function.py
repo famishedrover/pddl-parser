@@ -41,7 +41,7 @@ class Function:
         return self.__type
 
     def __str__(self):
-        return f"( ({self.__name} {' '.join(map(str, self.__variables))}) - {self.__type} )"
+        return f"({self.__name} {' '.join(map(str, self.__variables))}) - {self.__type}"
 
     def __lt__(self, other: 'Function'):
         return self.__name < other.__name

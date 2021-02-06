@@ -102,7 +102,7 @@ class PEffect(AbstractEffect):
         self.__expression = expression
 
     def __str__(self):
-        return f"({self.__op} {self.__predicate} {self.__expression}"
+        return f"({self.__op} {self.__predicate} {self.__expression})"
 
 
 EFFECT = Union[LITERAL, AbstractEffect]
