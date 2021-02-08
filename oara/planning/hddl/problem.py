@@ -80,6 +80,10 @@ class HDDLProblem:
     def htn_parameters(self) -> List[TypedVariable]:
         return self.__htn_parameters
 
+    @property
+    def metric(self) -> Optional[Metric]:
+        return self.__metric
+
     #def merge(self, other: 'Problem') -> 'Problem':
     #    return Problem(
     #        self.name, self.domain,
@@ -106,6 +110,3 @@ class HDDLProblem:
     {f"(:goal {self.__goal})" if self.goal else ''}
     {self.__metric if self.__metric else ''}
 )"""
-
-
-    # {f"(:htn {nltab.join(f''':parameters {' '.join(map(str, {self.__htn_parameters}))}''') if self.__htn_parameters else ''} {nltab.join({self.__htn})}" if self.__htn else ''}
